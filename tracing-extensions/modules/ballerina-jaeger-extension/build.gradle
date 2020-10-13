@@ -26,3 +26,9 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:${okHttpVersion}"
     implementation "com.squareup.okio:okio:${okIoVersion}"
 }
+
+jar {
+    manifest {
+        attributes('Implementation-Title': project.name, 'Implementation-Version': project.version)
+    }
+}

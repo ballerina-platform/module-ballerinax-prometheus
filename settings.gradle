@@ -17,8 +17,8 @@
 rootProject.name = 'ballerina-observability-parent'
 
 //include(':metrics-extensions:ballerina-micrometer-extension')
-//include(':metrics-extensions:ballerina-prometheus-extension')
-//include(':metrics-extensions')
+include(':metrics-extensions:ballerina-prometheus-extension')
+include(':metrics-extensions')
 
 include(':tracing-extensions:ballerina-jaeger-extension')
 //include(':tracing-extensions:ballerina-zipkin-extension')
@@ -26,7 +26,7 @@ include(':tracing-extensions:ballerina-jaeger-extension')
 include(':tracing-extensions')
 
 //project(':metrics-extensions:ballerina-micrometer-extension').projectDir = file('metrics-extensions/modules/ballerina-micrometer-extension')
-//project(':metrics-extensions:ballerina-prometheus-extension').projectDir = file('metrics-extensions/modules/ballerina-prometheus-extension')
+project(':metrics-extensions:ballerina-prometheus-extension').projectDir = file('metrics-extensions/modules/ballerina-prometheus-extension')
 
 project(':tracing-extensions:ballerina-jaeger-extension').projectDir = file('tracing-extensions/modules/ballerina-jaeger-extension')
 //project(':tracing-extensions:ballerina-zipkin-extension').projectDir = file('tracing-extensions/modules/ballerina-zipkin-extension')
