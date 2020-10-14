@@ -14,13 +14,209 @@
  * limitations under the License.
  */
 
-dependencies {
-    compile 'org.ballerinalang:ballerina-core:${ballerinaLangVersion}'
-    compile 'org.ballerinalang:ballerina-config:${ballerinaLangVersion}'
-    compile project(':metrics-extensions:ballerina-micrometer-extension')
-    compile 'io.micrometer:micrometer-core:1.0.3'
-    compile 'io.micrometer:micrometer-registry-prometheus:1.0.3'
-    compile 'io.prometheus:simpleclient_httpserver:0.3.0'
-}
+import org.apache.tools.ant.taskdefs.condition.Os
 
 description = 'Ballerina - Prometheus Extension for Metrics'
+
+configurations {
+    jbalTools
+    ballerinaStdLibs
+}
+
+dependencies {
+    implementation "org.ballerinalang:ballerina-runtime:${ballerinaLangVersion}"
+    implementation "org.ballerinalang:ballerina-config:${ballerinaLangVersion}"
+    implementation "org.ballerinalang:ballerina-stringutils:${ballerinaLangVersion}"
+
+    jbalTools("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
+        transitive = false
+    }
+
+    /* Standard libraries */
+    ballerinaStdLibs "org.ballerinalang:config-ballerina:${stdlibConfigVersion}"
+    ballerinaStdLibs "org.ballerinalang:stringutils-ballerina:${stdlibStringUtilsVersion}"
+    ballerinaStdLibs "org.ballerinalang:http-ballerina:${stdlibHttpVersion}"
+
+    /* Standard libraries */
+    ballerinaStdLibs "org.ballerinalang:log-ballerina:${stdlibLogVersion}"
+    ballerinaStdLibs "org.ballerinalang:io-ballerina:${stdlibIoVersion}"
+    ballerinaStdLibs "org.ballerinalang:time-ballerina:${stdlibTimeVersion}"
+    ballerinaStdLibs "org.ballerinalang:mime-ballerina:${stdlibMimeVersion}"
+    ballerinaStdLibs "org.ballerinalang:auth-ballerina:${stdlibAuthVersion}"
+    ballerinaStdLibs "org.ballerinalang:cache-ballerina:${stdlibCacheVersion}"
+    ballerinaStdLibs "org.ballerinalang:crypto-ballerina:${stdlibCryptoVersion}"
+
+    ballerinaStdLibs "org.ballerinalang:file-ballerina:${stdlibFileVersion}"
+    ballerinaStdLibs "org.ballerinalang:reflect-ballerina:${stdlibReflectVersion}"
+    ballerinaStdLibs "org.ballerinalang:runtime-ballerina:${stdlibRuntimeVersion}"
+    ballerinaStdLibs "org.ballerinalang:system-ballerina:${stdlibSystemVersion}"
+    ballerinaStdLibs "org.ballerinalang:task-ballerina:${stdlibTaskVersion}"
+}
+
+clean {
+    delete "$project.projectDir/src/main/ballerina/target"
+    delete "$project.projectDir/src/main/ballerina/Ballerina.lock"
+    delete "$project.projectDir/src/main/ballerina/ballerina-internal.log"
+}
+
+jar {
+    manifest {
+        attributes('Implementation-Title': project.name, 'Implementation-Version': project.version)
+    }
+}
+
+compileJava {
+    doFirst {
+        options.compilerArgs = [
+                '--module-path', classpath.asPath,
+        ]
+        classpath = files()
+    }
+}
+
+task unpackJballerinaTools(type: Copy) {
+    configurations.jbalTools.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+        from zipTree(artifact.getFile())
+        into new File("${buildDir}/target/extracted-distributions", "jballerina-tools-zip")
+    }
+}
+
+task unpackStdLibs() {
+    doLast {
+        configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+            copy {
+                from project.zipTree(artifact.getFile())
+                into new File("${buildDir}/target/extracted-distributions", artifact.name + "-zip")
+            }
+        }
+    }
+}
+
+task copyStdlibs(type: Copy) {
+    def ballerinaDist = "build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
+    into ballerinaDist
+
+    /* Standard Libraries */
+    configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+        def artifactExtractedPath = "${buildDir}/target/extracted-distributions/" + artifact.name + "-zip"
+        into("bir-cache/") {
+            from "${artifactExtractedPath}/caches/bir"
+        }
+        into("bre/lib/") {
+            from "${artifactExtractedPath}/libs"
+        }
+        into("docs/") {
+            from "${artifactExtractedPath}/docs"
+        }
+        // pack to new cache
+        into("cache/bir/") {
+            from "${artifactExtractedPath}/caches/bir"
+        }
+        into("cache/balo/") {
+            from "${artifactExtractedPath}/caches/balo"
+        }
+        into("cache/jar/") {
+            from "${artifactExtractedPath}/caches/jar"
+        }
+    }
+}
+
+def ballerinaProjectPath = "${project.projectDir}/src/main/ballerina"
+def moduleName = "prometheus"
+def moduleOrg = "ballerina"
+def ballerinaConfigFile = new File("${ballerinaProjectPath}/Ballerina.toml")
+def artifactCacheParent = file("$project.projectDir/build/cache_parent/")
+def artifactLibParent = file("$project.projectDir/build/lib_parent/")
+def tomlVersion = project.version.split("-")[0]
+def targetBallerinaJar = file("${project.projectDir}/target/caches/jar_cache/${moduleOrg}/${moduleName}/${tomlVersion}/${moduleOrg}-${moduleName}-${tomlVersion}.jar")
+def targetNativeJar = file("$project.rootDir/${moduleName}-native/build/libs/${moduleName}-native-${project.version}.jar")
+def originalConfig = ballerinaConfigFile.text
+
+task updateTomlVerions {
+    doLast {
+        def stdlibDependentConfigVersion = project.stdlibConfigVersion.split("-")[0]
+        def stdlibDependentStringUtilsVersion = project.stdlibStringUtilsVersion.split("-")[0]
+        def stdlibDependentHttpVersion = project.stdlibHttpVersion.split("-")[0]
+
+        def newConfig = ballerinaConfigFile.text.replace("@stdlib.config.version@", stdlibDependentConfigVersion)
+        newConfig = newConfig.replace("@stdlib.stringutils.version@", stdlibDependentStringUtilsVersion)
+        newConfig = newConfig.replace("@stdlib.http.version@", stdlibDependentHttpVersion)
+        ballerinaConfigFile.text = newConfig
+    }
+}
+
+task revertTomlFile {
+    doLast {
+        ballerinaConfigFile.text = originalConfig
+    }
+}
+
+task ballerinaBuild {
+    inputs.dir file(project.projectDir)
+    finalizedBy(revertTomlFile)
+
+    doLast {
+        def distributionBinPath =  project.projectDir.absolutePath + "/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
+
+        def additionalBuildParams = ""
+        if (project.hasProperty("debug")) {
+            additionalBuildParams = "--debug ${project.findProperty("debug")}"
+        }
+
+        exec {
+            workingDir ballerinaProjectPath
+            environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
+            if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                commandLine 'cmd', '/c', "${distributionBinPath}/ballerina.bat build --offline --skip-tests ${additionalBuildParams} -c ${moduleName} && exit %%ERRORLEVEL%%"
+            } else {
+                commandLine 'sh', '-c', "${distributionBinPath}/ballerina build --offline --skip-tests ${additionalBuildParams} -c ${moduleName}"
+            }
+        }
+        copy {
+            from file("${ballerinaProjectPath}/Ballerina.toml")
+            into file("${artifactCacheParent}/caches/bir/${moduleOrg}/${moduleName}/${tomlVersion}")
+        }
+        copy {
+            from file("${ballerinaProjectPath}/Ballerina.toml")
+            into file("${artifactCacheParent}/caches/balo/${moduleOrg}/${moduleName}/${tomlVersion}")
+        }
+        copy {
+            from file("${ballerinaProjectPath}/Ballerina.toml")
+            into file("${artifactCacheParent}/caches/jar/${moduleOrg}/${moduleName}/${tomlVersion}")
+        }
+        copy {
+            from file("${ballerinaProjectPath}/target/caches/bir_cache")
+            into file("${artifactCacheParent}/caches/bir")
+        }
+        copy {
+            from file("${ballerinaProjectPath}/target/balo")
+            into file("${artifactCacheParent}/caches/balo/${moduleOrg}/${moduleName}/${tomlVersion}")
+        }
+        copy {
+            from targetBallerinaJar
+            into file("${artifactCacheParent}/caches/jar/${moduleOrg}/${moduleName}/${tomlVersion}")
+        }
+        copy {
+            from targetBallerinaJar
+            into file("${artifactLibParent}/libs")
+        }
+        copy {
+            from targetNativeJar
+            into file("${artifactLibParent}/libs")
+        }
+//        copy {
+//            from configurations.externalJars
+//            into file("${artifactLibParent}/libs")
+//        }
+    }
+
+    outputs.dir artifactCacheParent
+    outputs.dir artifactLibParent
+}
+
+unpackStdLibs.dependsOn unpackJballerinaTools
+copyStdlibs.dependsOn unpackStdLibs
+updateTomlVerions.dependsOn copyStdlibs
+ballerinaBuild.dependsOn updateTomlVerions
+ballerinaBuild.dependsOn compileJava
+build.dependsOn ballerinaBuild
