@@ -5,12 +5,22 @@ ballerina_version = "slp4"
 
 [[imports."ballerina/prometheus:0.0.0"]]
 org_name = "ballerina"
+name = "config"
+version = "1.0.1"
+
+[[imports."ballerina/prometheus:0.0.0"]]
+org_name = "ballerina"
 name = "http"
 version = "1.0.1"
 
 [[imports."ballerina/prometheus:0.0.0"]]
 org_name = "ballerina"
 name = "stringutils"
+version = "0.5.1"
+
+[[imports."ballerina/system:0.6.1"]]
+org_name = "ballerina"
+name = "io"
 version = "0.5.1"
 
 [[imports."ballerina/auth:1.0.1"]]
@@ -37,11 +47,6 @@ version = "0.5.1"
 org_name = "ballerina"
 name = "cache"
 version = "2.0.1"
-
-[[imports."ballerina/system:0.6.1"]]
-org_name = "ballerina"
-name = "io"
-version = "0.5.1"
 
 [[imports."ballerina/http:1.0.1"]]
 org_name = "ballerina"

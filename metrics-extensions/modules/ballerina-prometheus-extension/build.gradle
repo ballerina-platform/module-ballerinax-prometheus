@@ -28,16 +28,17 @@ dependencies {
     implementation "org.ballerinalang:ballerina-config:${ballerinaLangVersion}"
     implementation "org.ballerinalang:ballerina-stringutils:${ballerinaLangVersion}"
 
+    // Ballerina Pack
     jbalTools("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
         transitive = false
     }
 
-    /* Standard libraries */
+    // Standard Library Dependencies
     ballerinaStdLibs "org.ballerinalang:config-ballerina:${stdlibConfigVersion}"
     ballerinaStdLibs "org.ballerinalang:stringutils-ballerina:${stdlibStringUtilsVersion}"
     ballerinaStdLibs "org.ballerinalang:http-ballerina:${stdlibHttpVersion}"
 
-    /* Standard libraries */
+    // Standard Library Transitive Dependencies
     ballerinaStdLibs "org.ballerinalang:log-ballerina:${stdlibLogVersion}"
     ballerinaStdLibs "org.ballerinalang:io-ballerina:${stdlibIoVersion}"
     ballerinaStdLibs "org.ballerinalang:time-ballerina:${stdlibTimeVersion}"
@@ -45,7 +46,6 @@ dependencies {
     ballerinaStdLibs "org.ballerinalang:auth-ballerina:${stdlibAuthVersion}"
     ballerinaStdLibs "org.ballerinalang:cache-ballerina:${stdlibCacheVersion}"
     ballerinaStdLibs "org.ballerinalang:crypto-ballerina:${stdlibCryptoVersion}"
-
     ballerinaStdLibs "org.ballerinalang:file-ballerina:${stdlibFileVersion}"
     ballerinaStdLibs "org.ballerinalang:reflect-ballerina:${stdlibReflectVersion}"
     ballerinaStdLibs "org.ballerinalang:runtime-ballerina:${stdlibRuntimeVersion}"

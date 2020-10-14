@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-//import ballerina/config;
+import ballerina/config;
 import ballerina/http;
 import ballerina/lang.'string as str;
 import ballerina/observe;
