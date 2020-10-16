@@ -18,10 +18,8 @@
 package org.ballerinalang.observe.metrics.prometheus;
 
 import org.ballerinalang.config.ConfigRegistry;
-import org.ballerinalang.jvm.annotation.JavaSPIService;
 import org.ballerinalang.jvm.observability.ObservabilityConstants;
 import org.ballerinalang.jvm.observability.metrics.spi.MetricReporter;
-import org.ballerinalang.jvm.observability.tracer.InvalidConfigurationException;
 import org.ballerinalang.jvm.scheduling.StrandMetadata;
 import org.ballerinalang.jvm.services.EmbeddedExecutorProvider;
 import org.ballerinalang.jvm.services.spi.EmbeddedExecutor;
@@ -36,7 +34,6 @@ import static org.ballerinalang.jvm.util.BLangConstants.BALLERINA_BUILTIN_PKG;
  *
  * @since 0.980.0
  */
-@JavaSPIService("org.ballerinalang.util.metrics.spi.MetricReporter")
 public class PrometheusReporter implements MetricReporter {
 
     private static final PrintStream console = System.out;
@@ -53,7 +50,7 @@ public class PrometheusReporter implements MetricReporter {
                                                          "init");
 
     @Override
-    public void init() throws InvalidConfigurationException {
+    public void init() {
         String hostname = ConfigRegistry.getInstance().
                 getConfigOrDefault(PROMETHEUS_HOST_CONFIG, DEFAULT_PROMETHEUS_HOST);
         String port = ConfigRegistry.getInstance().getConfigOrDefault(PROMETHEUS_PORT_CONFIG,
