@@ -24,8 +24,11 @@ import org.ballerinalang.jvm.scheduling.StrandMetadata;
 import org.ballerinalang.jvm.services.EmbeddedExecutorProvider;
 import org.ballerinalang.jvm.services.spi.EmbeddedExecutor;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Optional;
+import java.util.Properties;
 
 import static org.ballerinalang.jvm.util.BLangConstants.BALLERINA_BUILTIN_PKG;
 
@@ -38,27 +41,36 @@ public class PrometheusReporter implements MetricReporter {
 
     private static final PrintStream console = System.out;
     private static final String PROMETHEUS_PACKAGE = "prometheus";
-    private static final String PROMETHEUS_PACKAGE_VERSION = "0.0.0";
     private static final String PROMETHEUS_HOST_CONFIG = ObservabilityConstants.CONFIG_TABLE_METRICS
             + "." + PROMETHEUS_PACKAGE + ".host";
     private static final String PROMETHEUS_PORT_CONFIG = ObservabilityConstants.CONFIG_TABLE_METRICS + "."
             + PROMETHEUS_PACKAGE + ".port";
     private static final String DEFAULT_PROMETHEUS_HOST = "0.0.0.0";
     private static final String DEFAULT_PROMETHEUS_PORT = "9797";
-    private static final StrandMetadata metaData = new StrandMetadata(BALLERINA_BUILTIN_PKG, PROMETHEUS_PACKAGE,
-                                                         PROMETHEUS_PACKAGE_VERSION,
-                                                         "init");
 
     @Override
     public void init() {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("prometheus-reporter.properties");
+        String prometheusModuleVersion;
+        try {
+            Properties reporterProperties = new Properties();
+            reporterProperties.load(stream);
+            prometheusModuleVersion = (String) reporterProperties.get("moduleVersion");
+        } catch (IOException | ClassCastException e) {
+            console.println("ballerina: unexpected failure in detecting prometheus extension version");
+            return;
+        }
+
         String hostname = ConfigRegistry.getInstance().
                 getConfigOrDefault(PROMETHEUS_HOST_CONFIG, DEFAULT_PROMETHEUS_HOST);
         String port = ConfigRegistry.getInstance().getConfigOrDefault(PROMETHEUS_PORT_CONFIG,
                 DEFAULT_PROMETHEUS_PORT);
+
+        StrandMetadata metaData = new StrandMetadata(BALLERINA_BUILTIN_PKG, PROMETHEUS_PACKAGE,
+                prometheusModuleVersion, "init");
         EmbeddedExecutor executor = EmbeddedExecutorProvider.getInstance().getExecutor();
-        Optional<RuntimeException> prometheus = executor.executeService(PROMETHEUS_PACKAGE,
-                                                                        PROMETHEUS_PACKAGE_VERSION,
-                                                                        null, metaData);
+        Optional<RuntimeException> prometheus = executor.executeService(PROMETHEUS_PACKAGE, prometheusModuleVersion, null,
+                metaData);
         if (prometheus.isPresent()) {
             console.println("ballerina: failed to start Prometheus HTTP listener " + hostname + ":" + port + " "
                     + prometheus.get().getMessage());

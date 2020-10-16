@@ -57,3 +57,24 @@ publishing {
         }
     }
 }
+
+def reporterPropertiesFile = new File("${project.projectDir}/src/main/resources/prometheus-reporter.properties")
+def originalProperties = reporterPropertiesFile.text
+
+task updateReporterProperties {
+    doLast {
+        def tomlVersion = project.version.split("-")[0]
+
+        def newProperties = reporterPropertiesFile.text.replace("@toml.version@", tomlVersion)
+        reporterPropertiesFile.text = newProperties
+    }
+}
+
+task revertReporterProperties {
+    doLast {
+        reporterPropertiesFile.text = originalProperties
+    }
+}
+
+processResources.finalizedBy revertReporterProperties
+processResources.dependsOn updateReporterProperties

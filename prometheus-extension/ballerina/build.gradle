@@ -24,6 +24,8 @@ configurations {
 }
 
 dependencies {
+    compile project(':prometheus-extension-native')
+
     // Ballerina Pack
     jbalTools("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
         transitive = false
@@ -89,6 +91,7 @@ task copyStdlibs(type: Copy) {
         into("docs/") {
             from "${artifactExtractedPath}/docs"
         }
+
         // pack to new cache
         into("cache/bir/") {
             from "${artifactExtractedPath}/caches/bir"
@@ -107,10 +110,9 @@ def moduleOrg = "ballerina"
 def ballerinaConfigFile = new File("${project.projectDir}/Ballerina.toml")
 def artifactCacheParent = file("$project.projectDir/build/cache_parent/")
 def artifactLibParent = file("$project.projectDir/build/lib_parent/")
-//def tomlVersion = project.version.split("-")[0]
-def tomlVersion = "0.0.0"
+def tomlVersion = project.version.split("-")[0]
 def targetBallerinaJar = file("${project.projectDir}/target/caches/jar_cache/${moduleOrg}/${moduleName}/${tomlVersion}/${moduleOrg}-${moduleName}-${tomlVersion}.jar")
-def targetNativeJar = file("$project.rootDir/${moduleName}-native/build/libs/${moduleName}-native-${project.version}.jar")
+def targetNativeJar = file("$project.rootDir/${moduleName}-extension/native/build/libs/${moduleName}-extension-native-${project.version}.jar")
 def originalConfig = ballerinaConfigFile.text
 
 task updateTomlVerions {
