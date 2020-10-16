@@ -1,0 +1,19 @@
+[project]
+org-name = "ballerina"
+version = "@toml.version@"
+
+[dependencies]
+"ballerina/config" = "@stdlib.config.version@"
+"ballerina/stringutils" = "@stdlib.stringutils.version@"
+"ballerina/http" = "@stdlib.http.version@"
+"ballerina/observe" = "@stdlib.observe.version@"
+
+[platform]
+target = "java11"
+
+    [[platform.libraries]]
+    artifactId = "prometheus-extension-native"
+    version = "@project.version@"
+    path = "../native/build/libs/prometheus-extension-native-@project.version@.jar"
+    groupId = "ballerina"
+    modules = ["prometheus"]

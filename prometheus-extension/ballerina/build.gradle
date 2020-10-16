@@ -16,7 +16,7 @@
 
 import org.apache.tools.ant.taskdefs.condition.Os
 
-description = 'Ballerina - Prometheus Extension for Metrics'
+description = 'Ballerina - Prometheus Extension - Ballerina Module'
 
 configurations {
     jbalTools
@@ -24,10 +24,6 @@ configurations {
 }
 
 dependencies {
-    implementation "org.ballerinalang:ballerina-runtime:${ballerinaLangVersion}"
-    implementation "org.ballerinalang:ballerina-config:${ballerinaLangVersion}"
-    implementation "org.ballerinalang:ballerina-stringutils:${ballerinaLangVersion}"
-
     // Ballerina Pack
     jbalTools("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
         transitive = false
@@ -54,30 +50,15 @@ dependencies {
 }
 
 clean {
-    delete "$project.projectDir/src/main/ballerina/target"
-    delete "$project.projectDir/src/main/ballerina/Ballerina.lock"
-    delete "$project.projectDir/src/main/ballerina/ballerina-internal.log"
-}
-
-jar {
-    manifest {
-        attributes('Implementation-Title': project.name, 'Implementation-Version': project.version)
-    }
-}
-
-compileJava {
-    doFirst {
-        options.compilerArgs = [
-                '--module-path', classpath.asPath,
-        ]
-        classpath = files()
-    }
+    delete "${project.projectDir}/target"
+    delete "${project.projectDir}/Ballerina.lock"
+    delete "${project.projectDir}/ballerina-internal.log"
 }
 
 task unpackJballerinaTools(type: Copy) {
     configurations.jbalTools.resolvedConfiguration.resolvedArtifacts.each { artifact ->
         from zipTree(artifact.getFile())
-        into new File("${buildDir}/target/extracted-distributions", "jballerina-tools-zip")
+        into new File("${buildDir}/extracted-distributions", "jballerina-tools-zip")
     }
 }
 
@@ -86,19 +67,19 @@ task unpackStdLibs() {
         configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
             copy {
                 from project.zipTree(artifact.getFile())
-                into new File("${buildDir}/target/extracted-distributions", artifact.name + "-zip")
+                into new File("${buildDir}/extracted-distributions", artifact.name + "-zip")
             }
         }
     }
 }
 
 task copyStdlibs(type: Copy) {
-    def ballerinaDist = "build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
+    def ballerinaDist = "build/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
     into ballerinaDist
 
     /* Standard Libraries */
     configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
-        def artifactExtractedPath = "${buildDir}/target/extracted-distributions/" + artifact.name + "-zip"
+        def artifactExtractedPath = "${buildDir}/extracted-distributions/" + artifact.name + "-zip"
         into("bir-cache/") {
             from "${artifactExtractedPath}/caches/bir"
         }
@@ -121,13 +102,13 @@ task copyStdlibs(type: Copy) {
     }
 }
 
-def ballerinaProjectPath = "${project.projectDir}/src/main/ballerina"
 def moduleName = "prometheus"
 def moduleOrg = "ballerina"
-def ballerinaConfigFile = new File("${ballerinaProjectPath}/Ballerina.toml")
+def ballerinaConfigFile = new File("${project.projectDir}/Ballerina.toml")
 def artifactCacheParent = file("$project.projectDir/build/cache_parent/")
 def artifactLibParent = file("$project.projectDir/build/lib_parent/")
-def tomlVersion = project.version.split("-")[0]
+//def tomlVersion = project.version.split("-")[0]
+def tomlVersion = "0.0.0"
 def targetBallerinaJar = file("${project.projectDir}/target/caches/jar_cache/${moduleOrg}/${moduleName}/${tomlVersion}/${moduleOrg}-${moduleName}-${tomlVersion}.jar")
 def targetNativeJar = file("$project.rootDir/${moduleName}-native/build/libs/${moduleName}-native-${project.version}.jar")
 def originalConfig = ballerinaConfigFile.text
@@ -137,10 +118,16 @@ task updateTomlVerions {
         def stdlibDependentConfigVersion = project.stdlibConfigVersion.split("-")[0]
         def stdlibDependentStringUtilsVersion = project.stdlibStringUtilsVersion.split("-")[0]
         def stdlibDependentHttpVersion = project.stdlibHttpVersion.split("-")[0]
+        def stdlibDependentObserveVersion = project.stdlibObserveVersion.split("-")[0]
+        def stdlibDependentIoVersion = project.stdlibIoVersion.split("-")[0]
 
-        def newConfig = ballerinaConfigFile.text.replace("@stdlib.config.version@", stdlibDependentConfigVersion)
+        def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
+        newConfig = newConfig.replace("@toml.version@", tomlVersion)
+        newConfig = newConfig.replace("@stdlib.config.version@", stdlibDependentConfigVersion)
         newConfig = newConfig.replace("@stdlib.stringutils.version@", stdlibDependentStringUtilsVersion)
         newConfig = newConfig.replace("@stdlib.http.version@", stdlibDependentHttpVersion)
+        newConfig = newConfig.replace("@stdlib.observe.version@", stdlibDependentObserveVersion)
+        newConfig = newConfig.replace("@stdlib.io.version@", stdlibDependentIoVersion)
         ballerinaConfigFile.text = newConfig
     }
 }
@@ -156,7 +143,7 @@ task ballerinaBuild {
     finalizedBy(revertTomlFile)
 
     doLast {
-        def distributionBinPath =  project.projectDir.absolutePath + "/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
+        def distributionBinPath =  project.projectDir.absolutePath + "/build/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
 
         def additionalBuildParams = ""
         if (project.hasProperty("debug")) {
@@ -164,7 +151,7 @@ task ballerinaBuild {
         }
 
         exec {
-            workingDir ballerinaProjectPath
+            workingDir project.projectDir
             environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
                 commandLine 'cmd', '/c', "${distributionBinPath}/ballerina.bat build --offline --skip-tests ${additionalBuildParams} -c ${moduleName} && exit %%ERRORLEVEL%%"
@@ -173,23 +160,23 @@ task ballerinaBuild {
             }
         }
         copy {
-            from file("${ballerinaProjectPath}/Ballerina.toml")
+            from file("${project.projectDir}/Ballerina.toml")
             into file("${artifactCacheParent}/caches/bir/${moduleOrg}/${moduleName}/${tomlVersion}")
         }
         copy {
-            from file("${ballerinaProjectPath}/Ballerina.toml")
+            from file("${project.projectDir}/Ballerina.toml")
             into file("${artifactCacheParent}/caches/balo/${moduleOrg}/${moduleName}/${tomlVersion}")
         }
         copy {
-            from file("${ballerinaProjectPath}/Ballerina.toml")
+            from file("${project.projectDir}/Ballerina.toml")
             into file("${artifactCacheParent}/caches/jar/${moduleOrg}/${moduleName}/${tomlVersion}")
         }
         copy {
-            from file("${ballerinaProjectPath}/target/caches/bir_cache")
+            from file("${project.projectDir}/target/caches/bir_cache")
             into file("${artifactCacheParent}/caches/bir")
         }
         copy {
-            from file("${ballerinaProjectPath}/target/balo")
+            from file("${project.projectDir}/target/balo")
             into file("${artifactCacheParent}/caches/balo/${moduleOrg}/${moduleName}/${tomlVersion}")
         }
         copy {

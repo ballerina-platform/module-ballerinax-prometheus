@@ -1,8 +1,0 @@
-[project]
-org-name = "ballerina"
-version = "0.0.0"
-
-[dependencies]
-"ballerina/config" = "@stdlib.config.version@"
-"ballerina/stringutils" = "@stdlib.stringutils.version@"
-"ballerina/http" = "@stdlib.http.version@"
