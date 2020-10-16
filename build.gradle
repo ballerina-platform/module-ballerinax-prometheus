@@ -16,11 +16,14 @@
 
 plugins {
     id "com.github.spotbugs" version "1.6.10"
+    id "net.researchgate.release" version "2.8.0"
 }
 
 allprojects {
     group = project.group
     version = project.version
+
+    apply plugin: 'maven-publish'
 
     repositories {
         mavenLocal()
@@ -147,3 +150,26 @@ allprojects {
 subprojects {
     apply plugin: 'java'
 }
+
+def moduleVersion = project.version
+if (moduleVersion.indexOf('-') != -1) {
+    moduleVersion = moduleVersion.substring(0, moduleVersion.indexOf('-'))
+}
+
+release {
+    failOnPublishNeeded = false
+
+    buildTasks = ['build']
+    versionPropertyFile = 'gradle.properties'
+    tagTemplate = 'v$version'
+
+    git {
+        requireBranch = "release-${moduleVersion}"
+        pushToRemote = 'origin'
+    }
+}
+
+task build {
+    dependsOn('prometheus-extension-ballerina:build')
+}
+

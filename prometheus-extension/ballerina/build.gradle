@@ -191,19 +191,39 @@ task ballerinaBuild {
             from targetNativeJar
             into file("${artifactLibParent}/libs")
         }
-//        copy {
-//            from configurations.externalJars
-//            into file("${artifactLibParent}/libs")
-//        }
     }
 
     outputs.dir artifactCacheParent
     outputs.dir artifactLibParent
 }
 
+task createArtifactZip(type: Zip) {
+    destinationDirectory = file("${buildDir}/distributions")
+    from ballerinaBuild
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact source: createArtifactZip, extension: 'zip'
+        }
+    }
+
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/ballerina-platform/ballerina-observability")
+            credentials {
+                username = System.getenv("packageUser")
+                password = System.getenv("packagePAT")
+            }
+        }
+    }
+}
+
 unpackStdLibs.dependsOn unpackJballerinaTools
 copyStdlibs.dependsOn unpackStdLibs
 updateTomlVerions.dependsOn copyStdlibs
 ballerinaBuild.dependsOn updateTomlVerions
-ballerinaBuild.dependsOn compileJava
+ballerinaBuild.dependsOn ":prometheus-extension-native:build"
 build.dependsOn ballerinaBuild
