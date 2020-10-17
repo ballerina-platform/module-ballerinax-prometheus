@@ -62,6 +62,8 @@ task unpackStdLibs() {
 }
 
 task copyStdlibs(type: Copy) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     def ballerinaDist = "build/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
     into ballerinaDist
 
