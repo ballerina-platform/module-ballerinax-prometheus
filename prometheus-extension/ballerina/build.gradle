@@ -24,37 +24,24 @@ configurations {
 }
 
 dependencies {
-    compile project(':prometheus-extension-native')
+    implementation project(':prometheus-extension-native')
 
     // Ballerina Pack
     jbalTools("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
         transitive = false
     }
-
-    // Standard Library Dependencies
-    ballerinaStdLibs "org.ballerinalang:config-ballerina:${stdlibConfigVersion}"
-    ballerinaStdLibs "org.ballerinalang:stringutils-ballerina:${stdlibStringUtilsVersion}"
-    ballerinaStdLibs "org.ballerinalang:http-ballerina:${stdlibHttpVersion}"
-
-    // Standard Library Transitive Dependencies
-    ballerinaStdLibs "org.ballerinalang:log-ballerina:${stdlibLogVersion}"
-    ballerinaStdLibs "org.ballerinalang:io-ballerina:${stdlibIoVersion}"
-    ballerinaStdLibs "org.ballerinalang:time-ballerina:${stdlibTimeVersion}"
-    ballerinaStdLibs "org.ballerinalang:mime-ballerina:${stdlibMimeVersion}"
-    ballerinaStdLibs "org.ballerinalang:auth-ballerina:${stdlibAuthVersion}"
-    ballerinaStdLibs "org.ballerinalang:cache-ballerina:${stdlibCacheVersion}"
-    ballerinaStdLibs "org.ballerinalang:crypto-ballerina:${stdlibCryptoVersion}"
-    ballerinaStdLibs "org.ballerinalang:file-ballerina:${stdlibFileVersion}"
-    ballerinaStdLibs "org.ballerinalang:reflect-ballerina:${stdlibReflectVersion}"
-    ballerinaStdLibs "org.ballerinalang:runtime-ballerina:${stdlibRuntimeVersion}"
-    ballerinaStdLibs "org.ballerinalang:system-ballerina:${stdlibSystemVersion}"
-    ballerinaStdLibs "org.ballerinalang:task-ballerina:${stdlibTaskVersion}"
 }
 
 clean {
     delete "${project.projectDir}/target"
     delete "${project.projectDir}/Ballerina.lock"
     delete "${project.projectDir}/ballerina-internal.log"
+}
+
+jar {
+    manifest {
+        attributes('Implementation-Title': project.name, 'Implementation-Version': project.version)
+    }
 }
 
 task unpackJballerinaTools(type: Copy) {
@@ -121,7 +108,6 @@ task updateTomlVerions {
         def stdlibDependentStringUtilsVersion = project.stdlibStringUtilsVersion.split("-")[0]
         def stdlibDependentHttpVersion = project.stdlibHttpVersion.split("-")[0]
         def stdlibDependentObserveVersion = project.stdlibObserveVersion.split("-")[0]
-        def stdlibDependentIoVersion = project.stdlibIoVersion.split("-")[0]
 
         def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
         newConfig = newConfig.replace("@toml.version@", tomlVersion)
@@ -129,7 +115,6 @@ task updateTomlVerions {
         newConfig = newConfig.replace("@stdlib.stringutils.version@", stdlibDependentStringUtilsVersion)
         newConfig = newConfig.replace("@stdlib.http.version@", stdlibDependentHttpVersion)
         newConfig = newConfig.replace("@stdlib.observe.version@", stdlibDependentObserveVersion)
-        newConfig = newConfig.replace("@stdlib.io.version@", stdlibDependentIoVersion)
         ballerinaConfigFile.text = newConfig
     }
 }
@@ -193,6 +178,21 @@ task ballerinaBuild {
             from targetNativeJar
             into file("${artifactLibParent}/libs")
         }
+
+        // Publish to central
+        if (!project.version.endsWith('-SNAPSHOT') && ballerinaCentralAccessToken != null && project.hasProperty("publishToCentral")) {
+            println("Publishing to the ballerina central..")
+            exec {
+                workingDir project.projectDir
+                environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
+                if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                    commandLine 'cmd', '/c', "$distributionBinPath/ballerina.bat push ${moduleName} && exit %%ERRORLEVEL%%"
+                } else {
+                    commandLine 'sh', '-c', "$distributionBinPath/ballerina push ${moduleName}"
+                }
+            }
+
+        }
     }
 
     outputs.dir artifactCacheParent
@@ -223,7 +223,7 @@ publishing {
     }
 }
 
-unpackStdLibs.dependsOn unpackJballerinaTools
+copyStdlibs.dependsOn unpackJballerinaTools
 copyStdlibs.dependsOn unpackStdLibs
 updateTomlVerions.dependsOn copyStdlibs
 ballerinaBuild.dependsOn updateTomlVerions
