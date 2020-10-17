@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2020, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
@@ -12,25 +13,35 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 plugins {
-    id "com.gradle.enterprise" version "3.2"
+    id "de.undercouch.download"
 }
 
-rootProject.name = 'ballerina-observability-parent'
+task downloadFiles(type: Download) {
+    src([
+            'https://raw.githubusercontent.com/wso2/code-quality-tools/v1.3/checkstyle/checkstyle.xml',
+            'https://raw.githubusercontent.com/wso2/code-quality-tools/v1.3/checkstyle/suppressions.xml'
+    ])
+    overwrite false
+    onlyIfNewer true
+    dest buildDir
+}
 
-include(':build-config:checkstyle')
-include(':prometheus-extension-ballerina')
-include(':prometheus-extension-native')
+jar {
+    enabled = false
+}
 
-project(':build-config:checkstyle').projectDir = file('build-config/checkstyle')
-project(':prometheus-extension-ballerina').projectDir = file('prometheus-extension/ballerina')
-project(':prometheus-extension-native').projectDir = file('prometheus-extension/native')
+clean {
+    enabled = false
+}
 
-gradleEnterprise {
-    buildScan {
-        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-        termsOfServiceAgree = 'yes'
-    }
+artifacts.add('default', file("$project.buildDir/checkstyle.xml")) {
+    builtBy('downloadFiles')
+}
+
+artifacts.add('default', file("$project.buildDir/suppressions.xml")) {
+    builtBy('downloadFiles')
 }
