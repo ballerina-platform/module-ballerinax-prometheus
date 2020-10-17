@@ -198,3 +198,7 @@ task build {
     dependsOn('prometheus-extension-ballerina:build')
 }
 
+buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
+}
