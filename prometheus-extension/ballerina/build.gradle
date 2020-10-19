@@ -19,16 +19,17 @@ import org.apache.tools.ant.taskdefs.condition.Os
 description = 'Ballerina - Prometheus Extension - Ballerina Module'
 
 configurations {
-    jbalTools
+    nativeJar {
+        transitive false
+    }
+    distribution {
+        canBeConsumed true
+        canBeResolved false
+    }
 }
 
 dependencies {
-    implementation project(':prometheus-extension-native')
-
-    // Ballerina Pack
-    jbalTools("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
-        transitive = false
-    }
+    nativeJar project(':prometheus-extension-native')
 }
 
 clean {
@@ -43,14 +44,14 @@ jar {
     }
 }
 
-task unpackJballerinaTools(type: Copy) {
+task unpackJballerinaTools(type: Copy, dependsOn: configurations.jbalTools) {
     configurations.jbalTools.resolvedConfiguration.resolvedArtifacts.each { artifact ->
         from zipTree(artifact.getFile())
         into new File("${buildDir}/extracted-distributions", "jballerina-tools-zip")
     }
 }
 
-task unpackStdLibs() {
+task unpackStdLibs(dependsOn: configurations.ballerinaStdLibs) {
     doLast {
         configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
             copy {
@@ -63,9 +64,7 @@ task unpackStdLibs() {
 
 task copyStdlibs(type: Copy) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    def ballerinaDist = "build/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
-    into ballerinaDist
+    into "${project.buildDir}/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
 
     /* Standard Libraries */
     configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
@@ -100,7 +99,6 @@ def artifactCacheParent = file("$project.projectDir/build/cache_parent/")
 def artifactLibParent = file("$project.projectDir/build/lib_parent/")
 def tomlVersion = project.version.split("-")[0]
 def targetBallerinaJar = file("${project.projectDir}/target/caches/jar_cache/${moduleOrg}/${moduleName}/${tomlVersion}/${moduleOrg}-${moduleName}-${tomlVersion}.jar")
-def targetNativeJar = file("$project.rootDir/${moduleName}-extension/native/build/libs/${moduleName}-extension-native-${project.version}.jar")
 def originalConfig = ballerinaConfigFile.text
 
 task updateTomlVerions {
@@ -176,7 +174,7 @@ task ballerinaBuild {
             into file("${artifactLibParent}/libs")
         }
         copy {
-            from targetNativeJar
+            from configurations.nativeJar
             into file("${artifactLibParent}/libs")
         }
 
@@ -203,6 +201,10 @@ task ballerinaBuild {
 task createArtifactZip(type: Zip) {
     destinationDirectory = file("${buildDir}/distributions")
     from ballerinaBuild
+}
+
+artifacts {
+    distribution createArtifactZip
 }
 
 publishing {

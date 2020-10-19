@@ -156,10 +156,16 @@ subprojects {
     apply plugin: 'com.github.spotbugs'
 
     configurations {
+        jbalTools {
+            transitive = false
+        }
         ballerinaStdLibs
     }
 
     dependencies {
+        // Ballerina Pack
+        jbalTools "org.ballerinalang:jballerina-tools:${ballerinaLangVersion}"
+
         // Standard Library Dependencies
         ballerinaStdLibs "org.ballerinalang:config-ballerina:${stdlibConfigVersion}"
         ballerinaStdLibs "org.ballerinalang:stringutils-ballerina:${stdlibStringUtilsVersion}"
@@ -182,6 +188,20 @@ subprojects {
 
     checkstyle {
         toolVersion '8.18'
+    }
+
+    spotbugsMain {
+        it.reports {
+            xml.enabled false
+            html.enabled true
+        }
+    }
+
+    spotbugsTest {
+        it.reports {
+            xml.enabled false
+            html.enabled true
+        }
     }
 
     tasks.withType(Checkstyle) {
