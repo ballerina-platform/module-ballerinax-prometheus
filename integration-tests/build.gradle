@@ -1,0 +1,151 @@
+/*
+ * Copyright (c) 2020, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+description = 'Ballerina - Extension Integration Tests'
+
+configurations {
+    observabilityExtensions {
+        transitive false
+    }
+    testUtils {
+        transitive false
+    }
+}
+
+dependencies {
+    observabilityExtensions project(path: ':prometheus-extension-ballerina', configuration: 'distribution')
+
+    testImplementation "org.ballerinalang:ballerina-runtime:${ballerinaLangVersion}"
+    testImplementation "org.ballerinalang:ballerina-logging:${ballerinaLangVersion}"
+    testImplementation "org.ballerinalang:ballerina-test-utils:${ballerinaLangVersion}"
+    testImplementation "org.testng:testng:${testngVersion}"
+    testImplementation "org.slf4j:slf4j-jdk14:${slf4jVersion}"
+
+    testUtils "org.ballerinalang:ballerina-test-utils:${ballerinaLangVersion}"
+}
+
+jar {
+    enabled = false
+}
+
+task unpackJballerinaTools(type: Copy, dependsOn: configurations.jbalTools) {
+    configurations.jbalTools.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+        from zipTree(artifact.getFile())
+        into new File("${project.buildDir}/extracted-distributions", "jballerina-tools-zip")
+    }
+}
+
+def unpackDistributions(distributionConfigurations) {
+    distributionConfigurations.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+        copy {
+            from zipTree(artifact.getFile())
+            into new File("${project.buildDir}/extracted-distributions", artifact.name + "-zip")
+        }
+    }
+}
+
+task unpackStdLibs(dependsOn: configurations.ballerinaStdLibs) {
+    doLast {
+        unpackDistributions configurations.ballerinaStdLibs
+    }
+}
+
+task unpackExtensions(dependsOn: configurations.observabilityExtensions) {
+    doLast {
+        unpackDistributions configurations.observabilityExtensions
+    }
+}
+
+def copyDistributions (distributionConfigurations) {
+    copy {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        into "${project.buildDir}/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
+
+        /* Standard Libraries */
+        distributionConfigurations.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+            def artifactExtractedPath = "${project.buildDir}/extracted-distributions/" + artifact.name + "-zip"
+            into("bir-cache/") {
+                from "${artifactExtractedPath}/caches/bir"
+            }
+            into("bre/lib/") {
+                from "${artifactExtractedPath}/libs"
+            }
+            into("docs/") {
+                from "${artifactExtractedPath}/docs"
+            }
+
+            // pack to new cache
+            into("cache/bir/") {
+                from "${artifactExtractedPath}/caches/bir"
+            }
+            into("cache/balo/") {
+                from "${artifactExtractedPath}/caches/balo"
+            }
+            into("cache/jar/") {
+                from "${artifactExtractedPath}/caches/jar"
+            }
+        }
+    }
+}
+
+task copyStdlibs {
+    dependsOn unpackJballerinaTools
+    dependsOn unpackStdLibs
+
+    doLast {
+        copyDistributions configurations.ballerinaStdLibs
+    }
+}
+
+task copyExtensions {
+    dependsOn unpackJballerinaTools
+    dependsOn unpackExtensions
+
+    doLast {
+        copyDistributions configurations.observabilityExtensions
+    }
+}
+
+task createServerZip(type: Zip) {
+    dependsOn copyStdlibs
+    dependsOn copyExtensions
+
+    archiveFileName = "jballerina-tools-${ballerinaLangVersion}.zip"
+    destinationDirectory = file("${buildDir}/repacked-distributions")
+    from "${project.buildDir}/extracted-distributions/jballerina-tools-zip/"
+}
+
+test {
+    dependsOn createServerZip
+
+    testLogging {
+        showStackTraces true
+        showStandardStreams true
+        events "failed"
+        exceptionFormat "full"
+    }
+
+    systemProperty 'basedir', "${buildDir}"
+    systemProperty 'libdir', "${buildDir}"
+    systemProperty 'server.zip', createServerZip.outputs.files.singleFile
+    systemProperty 'jballerina.server.zip', createServerZip.outputs.files.singleFile
+    systemProperty 'java.util.logging.config.file', "${buildDir}/resources/test/logging.properties"
+    systemProperty 'java.util.logging.manager', 'org.ballerinalang.logging.BLogManager'
+    systemProperty 'ballerina.agent.path', configurations.testUtils.asPath
+    useTestNG() {
+        suites 'src/test/resources/testng.xml'
+    }
+}
