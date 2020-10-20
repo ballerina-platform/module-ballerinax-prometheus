@@ -25,7 +25,7 @@ service metricsTest on new http:Listener(9091) {
     @http:ResourceConfig {
         path: "/sum"
     }
-    resource function getProduct (http:Caller caller, http:Request req) {
+    resource function testCase(http:Caller caller, http:Request req) {
         //ObservableAdderClass adder = new ObservableAdder(20, 34);
         //var sum = adder.getSum();
 

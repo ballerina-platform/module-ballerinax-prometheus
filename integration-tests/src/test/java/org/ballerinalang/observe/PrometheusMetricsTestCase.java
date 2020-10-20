@@ -24,9 +24,11 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,30 +62,44 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
     @Test
     public void testMetrics() throws Exception {
         final Map<String, Pattern> expectedMetrics = new HashMap<>();
-        expectedMetrics.put("response_time_seconds_value{service=\"metricsTest\",src_module=\"_anon/.:0.0.0\"," +
-                "http_status_code_group=\"2xx\",src_remote=\"true\",src_position=\"metrics_test.bal:57:20\"," +
-                "action=\"respond\",resource=\"getProduct\",connector_name=\"ballerina/http/Caller\",}",
+        expectedMetrics.put("requests_total_value{service=\"metricsTest\",connector_name=\"http\"," +
+                "src_module=\"_anon/.:0.0.0\",src_entry_point_resource=\"true\",protocol=\"http\"," +
+                "http_url=\"/prometheus_test/sum\",src_position=\"01_prometheus_test.bal:28:5\"," +
+                "resource=\"testCase\",http_method=\"GET\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
-        expectedMetrics.put("response_time_seconds_value{service=\"metricsTest\"," +
-                "src_position=\"metrics_test.bal:36:5\",connector_name=\"http\",src_module=\"_anon/.:0.0.0\"," +
-                "src_entry_point_resource=\"true\",protocol=\"http\",resource=\"getProduct\",http_url=\"/test\"," +
-                "http_method=\"GET\",}",
+        expectedMetrics.put("requests_total_value{service=\"metricsTest\",src_module=\"_anon/.:0.0.0\"," +
+                "http_status_code_group=\"2xx\",src_remote=\"true\",action=\"respond\"," +
+                "src_position=\"01_prometheus_test.bal:34:20\",resource=\"testCase\"," +
+                "connector_name=\"ballerina/http/Caller\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
-        expectedMetrics.put("response_time_seconds_value{service=\"metricsTest\",function=\"getQuery\"," +
-                "resource=\"getProduct\",src_position=\"metrics_test.bal:37:63\",src_module=\"_anon/.:0.0.0\",}",
+        expectedMetrics.put("inprogress_requests_value{service=\"metricsTest\",src_module=\"_anon/.:0.0.0\"," +
+                "src_remote=\"true\",action=\"respond\",src_position=\"01_prometheus_test.bal:34:20\"," +
+                "resource=\"testCase\",connector_name=\"ballerina/http/Caller\",}",
+                PROMETHEUS_METRIC_VALUE_REGEX);
+        expectedMetrics.put("inprogress_requests_value{service=\"metricsTest\",connector_name=\"http\"," +
+                "src_module=\"_anon/.:0.0.0\",src_entry_point_resource=\"true\",protocol=\"http\"," +
+                "http_url=\"/prometheus_test/sum\",src_position=\"01_prometheus_test.bal:28:5\"," +
+                "resource=\"testCase\",http_method=\"GET\",}",
+                PROMETHEUS_METRIC_VALUE_REGEX);
+        expectedMetrics.put("response_time_nanoseconds_total_value{service=\"metricsTest\"," +
+                "connector_name=\"http\",src_module=\"_anon/.:0.0.0\",src_entry_point_resource=\"true\"," +
+                "protocol=\"http\",http_url=\"/prometheus_test/sum\",src_position=\"01_prometheus_test.bal:28:5\"," +
+                "resource=\"testCase\",http_method=\"GET\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
         expectedMetrics.put("response_time_nanoseconds_total_value{service=\"metricsTest\"," +
                 "src_module=\"_anon/.:0.0.0\",http_status_code_group=\"2xx\",src_remote=\"true\"," +
-                "src_position=\"metrics_test.bal:57:20\",action=\"respond\",resource=\"getProduct\"," +
+                "action=\"respond\",src_position=\"01_prometheus_test.bal:34:20\",resource=\"testCase\"," +
                 "connector_name=\"ballerina/http/Caller\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
-        expectedMetrics.put("response_time_nanoseconds_total_value{service=\"metricsTest\"," +
-                "src_position=\"metrics_test.bal:36:5\",connector_name=\"http\",src_module=\"_anon/.:0.0.0\"," +
-                "src_entry_point_resource=\"true\",protocol=\"http\",resource=\"getProduct\",http_url=\"/test\"," +
-                "http_method=\"GET\",}",
+        expectedMetrics.put("response_time_seconds_value{service=\"metricsTest\",src_module=\"_anon/.:0.0.0\"," +
+                "http_status_code_group=\"2xx\",src_remote=\"true\",action=\"respond\"," +
+                "src_position=\"01_prometheus_test.bal:34:20\",resource=\"testCase\"," +
+                "connector_name=\"ballerina/http/Caller\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
-        expectedMetrics.put("response_time_nanoseconds_total_value{service=\"metricsTest\",function=\"getQuery\"," +
-                "resource=\"getProduct\",src_position=\"metrics_test.bal:37:63\",src_module=\"_anon/.:0.0.0\",}",
+        expectedMetrics.put("response_time_seconds_value{service=\"metricsTest\",connector_name=\"http\"," +
+                "src_module=\"_anon/.:0.0.0\",src_entry_point_resource=\"true\",protocol=\"http\"," +
+                "http_url=\"/prometheus_test/sum\",src_position=\"01_prometheus_test.bal:28:5\"," +
+                "resource=\"testCase\",http_method=\"GET\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
 
         final String[] runtimeArgs = new String[]{
@@ -101,12 +117,13 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
             Assert.assertEquals(responseData, "Sum: 53");
             i++;
         }
+        Thread.sleep(1000);
 
         // Read metrics from Prometheus endpoint
-        String prometheusResponseData = HttpClientRequest.doGet(PROMETHEUS_METRICS_URL).getData();
-        List<String> metricsList = Arrays.stream(prometheusResponseData.split("\n"))
-                .filter(s -> !s.startsWith("#"))
-                .collect(Collectors.toList());
+        URL metricsEndPoint = new URL(PROMETHEUS_METRICS_URL);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(metricsEndPoint.openConnection()
+                .getInputStream()));
+        List<String> metricsList = reader.lines().filter(s -> !s.startsWith("#")).collect(Collectors.toList());
 
         Assert.assertTrue(metricsList.size() != 0);
         int count = 0;

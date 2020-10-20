@@ -25,10 +25,8 @@
         <listener class-name="org.ballerinalang.test.listener.TestNGListener"/>
     </listeners>
 
-    <!-- TODO: Re-enable once the issue with immortal being set for prometheus reporter is fixed -->
-    <test name="ballerina-observability-tests" parallel="false" enabled="false">
+    <test name="ballerina-observability-tests" parallel="false">
         <classes>
-            <class name="org.ballerinalang.observe.BaseTestCase"/>
             <class name="org.ballerinalang.observe.PrometheusMetricsTestCase"/>
         </classes>
     </test>
