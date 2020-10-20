@@ -95,8 +95,8 @@ task copyStdlibs(type: Copy) {
 def moduleName = "prometheus"
 def moduleOrg = "ballerina"
 def ballerinaConfigFile = new File("${project.projectDir}/Ballerina.toml")
-def artifactCacheParent = file("$project.projectDir/build/cache_parent/")
-def artifactLibParent = file("$project.projectDir/build/lib_parent/")
+def artifactCacheParent = file("${project.buildDir}/cache_parent/")
+def artifactLibParent = file("${project.buildDir}/lib_parent/")
 def tomlVersion = project.version.split("-")[0]
 def ballerinaCentralAccessToken = System.getenv('BALLERINA_CENTRAL_ACCESS_TOKEN')
 def targetBallerinaJar = file("${project.projectDir}/target/caches/jar_cache/${moduleOrg}/${moduleName}/${tomlVersion}/${moduleOrg}-${moduleName}-${tomlVersion}.jar")
@@ -130,7 +130,7 @@ task ballerinaBuild {
     finalizedBy(revertTomlFile)
 
     doLast {
-        def distributionBinPath =  project.projectDir.absolutePath + "/build/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
+        def distributionBinPath =  project.buildDir.absolutePath + "/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
 
         def additionalBuildParams = ""
         if (project.hasProperty("debug")) {

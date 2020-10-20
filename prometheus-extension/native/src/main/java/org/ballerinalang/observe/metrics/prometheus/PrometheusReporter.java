@@ -17,12 +17,12 @@
  */
 package org.ballerinalang.observe.metrics.prometheus;
 
+import io.ballerina.runtime.api.async.StrandMetadata;
+import io.ballerina.runtime.observability.ObservabilityConstants;
+import io.ballerina.runtime.observability.metrics.spi.MetricReporter;
+import io.ballerina.runtime.services.EmbeddedExecutorProvider;
+import io.ballerina.runtime.services.spi.EmbeddedExecutor;
 import org.ballerinalang.config.ConfigRegistry;
-import org.ballerinalang.jvm.observability.ObservabilityConstants;
-import org.ballerinalang.jvm.observability.metrics.spi.MetricReporter;
-import org.ballerinalang.jvm.scheduling.StrandMetadata;
-import org.ballerinalang.jvm.services.EmbeddedExecutorProvider;
-import org.ballerinalang.jvm.services.spi.EmbeddedExecutor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +30,7 @@ import java.io.PrintStream;
 import java.util.Optional;
 import java.util.Properties;
 
-import static org.ballerinalang.jvm.util.BLangConstants.BALLERINA_BUILTIN_PKG;
+import static io.ballerina.runtime.util.BLangConstants.BALLERINA_BUILTIN_PKG;
 
 /**
  * This is the reporter extension for the Prometheus.
@@ -61,8 +61,8 @@ public class PrometheusReporter implements MetricReporter {
             return;
         }
 
-        String hostname = ConfigRegistry.getInstance().
-                getConfigOrDefault(PROMETHEUS_HOST_CONFIG, DEFAULT_PROMETHEUS_HOST);
+        String hostname = ConfigRegistry.getInstance()
+                .getConfigOrDefault(PROMETHEUS_HOST_CONFIG, DEFAULT_PROMETHEUS_HOST);
         String port = ConfigRegistry.getInstance().getConfigOrDefault(PROMETHEUS_PORT_CONFIG,
                 DEFAULT_PROMETHEUS_PORT);
 

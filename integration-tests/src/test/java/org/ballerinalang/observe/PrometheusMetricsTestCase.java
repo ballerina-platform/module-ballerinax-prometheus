@@ -33,8 +33,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.ballerinalang.jvm.observability.ObservabilityConstants.CONFIG_METRICS_ENABLED;
-import static org.ballerinalang.jvm.observability.ObservabilityConstants.CONFIG_TABLE_METRICS;
+import static io.ballerina.runtime.observability.ObservabilityConstants.CONFIG_METRICS_ENABLED;
+import static io.ballerina.runtime.observability.ObservabilityConstants.CONFIG_TABLE_METRICS;
 
 /**
  * Integration test for Prometheus extension.
@@ -90,7 +90,7 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
                 "--" + CONFIG_METRICS_ENABLED + "=true",
                 "--" + CONFIG_TABLE_METRICS + ".statistic.percentiles=0.5, 0.75, 0.98, 0.99, 0.999"
         };
-        final String balFile = Paths.get(RESOURCES_DIR.getAbsolutePath(), "prometheus-test.bal").toFile()
+        final String balFile = Paths.get(RESOURCES_DIR.getAbsolutePath(), "01_prometheus_test.bal").toFile()
                 .getAbsolutePath();
         serverInstance.startServer(balFile, null, runtimeArgs, new int[] { 9091 });
 
