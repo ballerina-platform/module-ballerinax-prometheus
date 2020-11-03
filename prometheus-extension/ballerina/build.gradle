@@ -63,6 +63,9 @@ task unpackStdLibs(dependsOn: configurations.ballerinaStdLibs) {
 }
 
 task copyStdlibs(type: Copy) {
+    dependsOn unpackJballerinaTools
+    dependsOn unpackStdLibs
+
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     into "${project.buildDir}/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
 
@@ -126,6 +129,10 @@ task revertTomlFile {
 }
 
 task ballerinaBuild {
+    dependsOn copyStdlibs
+    dependsOn updateTomlVerions
+    dependsOn configurations.nativeJar
+
     inputs.dir file(project.projectDir)
     finalizedBy(revertTomlFile)
 
@@ -227,9 +234,6 @@ publishing {
     }
 }
 
-copyStdlibs.dependsOn unpackJballerinaTools
-copyStdlibs.dependsOn unpackStdLibs
-updateTomlVerions.dependsOn copyStdlibs
-ballerinaBuild.dependsOn updateTomlVerions
-ballerinaBuild.dependsOn ":prometheus-extension-native:build"
-build.dependsOn ballerinaBuild
+build {
+    dependsOn ballerinaBuild
+}
