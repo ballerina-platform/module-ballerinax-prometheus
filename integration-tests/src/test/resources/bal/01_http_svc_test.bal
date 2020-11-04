@@ -19,18 +19,18 @@ import ballerina/observe;
 import ballerina/prometheus as _;
 
 @http:ServiceConfig {
-    basePath:"/prometheus-test"
+    basePath:"/test"
 }
 service metricsTest on new http:Listener(9091) {
     @http:ResourceConfig {
         path: "/sum"
     }
     resource function testCase(http:Caller caller, http:Request req) {
-        //ObservableAdderClass adder = new ObservableAdder(20, 34);
-        //var sum = adder.getSum();
+        ObservableAdderClass adder = new ObservableAdder(20, 33);
+        var sum = adder.getSum();
 
         http:Response resp = new;
-        resp.setTextPayload(<@untainted> "Sum: 53");
+        resp.setTextPayload(<@untainted> "Sum: " + sum.toString());
         checkpanic caller->respond(resp);
     }
 }

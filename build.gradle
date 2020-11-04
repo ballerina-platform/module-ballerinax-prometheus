@@ -205,6 +205,7 @@ subprojects {
     }
 
     tasks.withType(Checkstyle) {
+        dependsOn ":build-config:checkstyle:downloadFiles"
         configFile rootProject.file("build-config/checkstyle/build/checkstyle.xml")
         exclude '**/module-info.java'
     }

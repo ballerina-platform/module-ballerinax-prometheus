@@ -35,28 +35,32 @@ import static io.ballerina.runtime.util.BLangConstants.BALLERINA_BUILTIN_PKG_PRE
  * @since 0.980.0
  */
 public class PrometheusMetricsReporterFactory implements MetricReporterFactory {
-
     private static final PrintStream console = System.out;
+
+    private static final String REPORTER_NAME = "prometheus";
+
+    private static final String REPORTER_PROPERTIES_FILE = "prometheus-reporter.properties";
+    private static final String MODULE_VERSION_PROPERTY_KEY = "moduleVersion";
     private static final String PROMETHEUS_PACKAGE = "prometheus";
 
     @Override
     public String getName() {
-        return PROMETHEUS_PACKAGE;
+        return REPORTER_NAME;
     }
 
     @Override
     public BObject getReporterBObject() {
         String prometheusModuleVersion;
         try {
-            InputStream stream = getClass().getClassLoader().getResourceAsStream("prometheus-reporter.properties");
+            InputStream stream = getClass().getClassLoader().getResourceAsStream(REPORTER_PROPERTIES_FILE);
             Properties reporterProperties = new Properties();
             reporterProperties.load(stream);
-            prometheusModuleVersion = (String) reporterProperties.get("moduleVersion");
+            prometheusModuleVersion = (String) reporterProperties.get(MODULE_VERSION_PROPERTY_KEY);
         } catch (IOException | ClassCastException e) {
-            console.println("ballerina: unexpected failure in detecting prometheus extension version");
+            console.println("ballerina: unexpected failure in detecting Prometheus extension version");
             return null;
         }
-        Module prometheusModule = new Module(BALLERINA_BUILTIN_PKG_PREFIX, "prometheus", prometheusModuleVersion);
-        return ValueCreator.createObjectValue(prometheusModule, "PrometheusMetricReporter");
+        Module prometheusModule = new Module(BALLERINA_BUILTIN_PKG_PREFIX, PROMETHEUS_PACKAGE, prometheusModuleVersion);
+        return ValueCreator.createObjectValue(prometheusModule, "MetricReporter");
     }
 }

@@ -23,11 +23,10 @@ import static io.ballerina.runtime.observability.ObservabilityConstants.CONFIG_T
 
 /**
  * This is the constants class that defines all the constants
- * that are used by the {@link OpenTracingExtension}.
+ * that are used by the {@link JaegerTracerProvider}.
  */
 public class Constants {
     private Constants() {
-
     }
 
     static final String TRACER_NAME = "jaeger";
@@ -47,4 +46,7 @@ public class Constants {
     static final int DEFAULT_REPORTER_FLUSH_INTERVAL = 1000;
     static final int DEFAULT_REPORTER_MAX_BUFFER_SPANS = 10000;
 
+    static final String TRACER_PROPERTIES_FILE = "jaeger-tracer.properties";
+    static final String MODULE_VERSION_PROPERTY_KEY = "moduleVersion";
+    static final String JAEGER_PACKAGE = "jaeger";
 }

@@ -32,8 +32,8 @@ final string REPORTER_HOST = config:getAsString(PROMETHEUS_HOST_CONFIG, "0.0.0.0
 const string EXPIRY_TAG = "timeWindow";
 const string PERCENTILE_TAG = "quantile";
 
-# Extension class created by PrometheusReporter
-public class PrometheusMetricReporter {
+# Extension class created by Prometheus MetricReporter
+public class MetricReporter {
     # Handle Metrics Reporter start.
     #
     # + return - `()` if no error occurred, and an error otherwise

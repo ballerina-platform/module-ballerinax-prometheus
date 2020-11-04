@@ -18,6 +18,7 @@
 package org.ballerinalang.observe;
 
 import org.ballerinalang.test.context.BServerInstance;
+import org.ballerinalang.test.context.LogLeecher;
 import org.ballerinalang.test.util.HttpClientRequest;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -49,7 +50,7 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
     private static final File RESOURCES_DIR = Paths.get("src", "test", "resources", "bal").toFile();
     private static final Pattern PROMETHEUS_METRIC_VALUE_REGEX = Pattern.compile("[-+]?\\d*\\.?\\d+([eE][-+]?\\d+)?");
     private static final String PROMETHEUS_METRICS_URL = "http://localhost:9797/metrics";
-    private static final String TEST_RESOURCE_URL = "http://localhost:9091/prometheus-test/sum";
+    private static final String TEST_RESOURCE_URL = "http://localhost:9091/test/sum";
 
     @BeforeMethod
     private void setup() throws Exception {
@@ -66,7 +67,7 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
         final Map<String, Pattern> expectedMetrics = new HashMap<>();
         expectedMetrics.put("requests_total_value{service=\"metricsTest\",connector_name=\"http\"," +
                 "src_module=\"_anon/.:0.0.0\",src_entry_point_resource=\"true\",protocol=\"http\"," +
-                "http_url=\"/prometheus_test/sum\",resource=\"testCase\",src_position=\"01_http_svc_test.bal:28:5\"," +
+                "http_url=\"/test/sum\",resource=\"testCase\",src_position=\"01_http_svc_test.bal:28:5\"," +
                 "http_method=\"GET\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
         expectedMetrics.put("requests_total_value{service=\"metricsTest\"," +
@@ -76,7 +77,7 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
                 PROMETHEUS_METRIC_VALUE_REGEX);
         expectedMetrics.put("inprogress_requests_value{service=\"metricsTest\",connector_name=\"http\"," +
                 "src_module=\"_anon/.:0.0.0\",src_entry_point_resource=\"true\",protocol=\"http\"," +
-                "http_url=\"/prometheus_test/sum\",resource=\"testCase\",src_position=\"01_http_svc_test.bal:28:5\"," +
+                "http_url=\"/test/sum\",resource=\"testCase\",src_position=\"01_http_svc_test.bal:28:5\"," +
                 "http_method=\"GET\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
         expectedMetrics.put("inprogress_requests_value{service=\"metricsTest\"," +
@@ -85,7 +86,7 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
                 PROMETHEUS_METRIC_VALUE_REGEX);
         expectedMetrics.put("response_time_nanoseconds_total_value{service=\"metricsTest\"," +
                 "connector_name=\"http\",src_module=\"_anon/.:0.0.0\",src_entry_point_resource=\"true\"," +
-                "protocol=\"http\",http_url=\"/prometheus_test/sum\",resource=\"testCase\"," +
+                "protocol=\"http\",http_url=\"/test/sum\",resource=\"testCase\"," +
                 "src_position=\"01_http_svc_test.bal:28:5\",http_method=\"GET\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
         expectedMetrics.put("response_time_nanoseconds_total_value{service=\"metricsTest\"," +
@@ -95,7 +96,7 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
                 PROMETHEUS_METRIC_VALUE_REGEX);
         expectedMetrics.put("response_time_seconds_value{service=\"metricsTest\",connector_name=\"http\"," +
                 "src_module=\"_anon/.:0.0.0\",src_entry_point_resource=\"true\",protocol=\"http\"," +
-                "http_url=\"/prometheus_test/sum\",resource=\"testCase\",src_position=\"01_http_svc_test.bal:28:5\"," +
+                "http_url=\"/test/sum\",resource=\"testCase\",src_position=\"01_http_svc_test.bal:28:5\"," +
                 "http_method=\"GET\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
         expectedMetrics.put("response_time_seconds_value{service=\"metricsTest\"," +
@@ -104,6 +105,12 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
                 "connector_name=\"ballerina/http/Caller\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
 
+        LogLeecher prometheusServerLogLeecher = new LogLeecher(
+                "[ballerina/http] started HTTP/WS listener 0.0.0.0:9797");
+        serverInstance.addLogLeecher(prometheusServerLogLeecher);
+        LogLeecher errorLogLeacher = new LogLeecher("error");
+        serverInstance.addErrorLogLeecher(errorLogLeacher);
+
         final String[] runtimeArgs = new String[]{
                 "--" + CONFIG_METRICS_ENABLED + "=true",
                 "--" + CONFIG_TABLE_METRICS + ".statistic.percentiles=0.5, 0.75, 0.98, 0.99, 0.999"
@@ -111,6 +118,7 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
         final String balFile = Paths.get(RESOURCES_DIR.getAbsolutePath(), "01_http_svc_test.bal").toFile()
                 .getAbsolutePath();
         serverInstance.startServer(balFile, null, runtimeArgs, new int[] { 9091, 9797 });
+        prometheusServerLogLeecher.waitForText(1000);
 
         // Send requests to generate metrics
         int i = 0;
@@ -146,15 +154,24 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
             }
         }
         Assert.assertEquals(count, expectedMetrics.size(), "metrics count is not equal to the expected metrics count.");
+        Assert.assertFalse(errorLogLeacher.isTextFound(), "Unexpected error log found");
     }
 
     @Test
     public void testPrometheusDisabled() throws Exception {
+        LogLeecher prometheusServerLogLeecher = new LogLeecher(
+                "[ballerina/http] started HTTP/WS listener 0.0.0.0:9797");
+        serverInstance.addLogLeecher(prometheusServerLogLeecher);
+        LogLeecher errorLogLeacher = new LogLeecher("error");
+        serverInstance.addErrorLogLeecher(errorLogLeacher);
+
         final String balFile = Paths.get(RESOURCES_DIR.getAbsolutePath(), "01_http_svc_test.bal").toFile()
                 .getAbsolutePath();
         serverInstance.startServer(balFile, null, null, new int[] { 9091 });
 
         String responseData = HttpClientRequest.doGet(TEST_RESOURCE_URL).getData();
         Assert.assertEquals(responseData, "Sum: 53");
+        Assert.assertFalse(prometheusServerLogLeecher.isTextFound(), "Prometheus extension not expected to start");
+        Assert.assertFalse(errorLogLeacher.isTextFound(), "Unexpected error log found");
     }
 }

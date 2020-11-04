@@ -36,7 +36,7 @@ public class BaseTestCase {
     }
 
     @AfterSuite(alwaysRun = true)
-    public void destroy() throws BallerinaTestException {
+    public void destroy() {
         balServer.cleanup();
     }
 }
