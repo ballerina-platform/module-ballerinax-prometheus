@@ -28,7 +28,7 @@ import org.testng.annotations.BeforeSuite;
  * by all the test cases throughout.
  */
 public class BaseTestCase {
-    BalServer balServer;
+    static BalServer balServer;
 
     @BeforeSuite(alwaysRun = true)
     public void initialize() throws BallerinaTestException {

@@ -53,12 +53,12 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
     private static final String TEST_RESOURCE_URL = "http://localhost:9091/test/sum";
 
     @BeforeMethod
-    private void setup() throws Exception {
+    public void setup() throws Exception {
         serverInstance = new BServerInstance(balServer);
     }
 
     @AfterMethod
-    private void cleanUpServer() throws Exception {
+    public void cleanUpServer() throws Exception {
         serverInstance.shutdownServer();
     }
 
