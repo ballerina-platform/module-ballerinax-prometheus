@@ -191,16 +191,28 @@ subprojects {
     }
 
     spotbugsMain {
+        it.effort "max"
+        it.reportLevel "low"
         it.reports {
             xml.enabled false
             html.enabled true
         }
+        def excludeFile = file('spotbugs-exclude.xml')
+        if(excludeFile.exists()) {
+            it.excludeFilter = excludeFile
+        }
     }
 
     spotbugsTest {
+        it.effort "max"
+        it.reportLevel "low"
         it.reports {
             xml.enabled false
             html.enabled true
+        }
+        def excludeFile = file('spotbugs-test-exclude.xml')
+        if(excludeFile.exists()) {
+            it.excludeFilter = excludeFile
         }
     }
 
