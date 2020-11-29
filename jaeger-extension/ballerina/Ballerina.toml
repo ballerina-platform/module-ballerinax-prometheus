@@ -14,51 +14,43 @@
 # specific language governing permissions and limitations
 # under the License.
 
-[project]
-org-name = "ballerina"
+[package]
+org = "ballerina"
+name = "jaeger"
 version = "@toml.version@"
 
-[platform]
-target = "java11"
+[[platform.java11.dependency]]
+path = "../native/build/libs/jaeger-extension-native-@project.version@.jar"
+groupId = "ballerina"
+artifactId = "jaeger-extension-native"
+version = "@project.version@"
 
-    [[platform.libraries]]
-    artifactId = "jaeger-extension-native"
-    version = "@project.version@"
-    path = "../native/build/libs/jaeger-extension-native-@project.version@.jar"
-    groupId = "ballerina"
-    modules = ["jaeger"]
+[[platform.java11.dependency]]
+path = "./lib/jaeger-core-@jaeger.version@.jar"
+groupId = "io.jaegertracing"
+artifactId = "jaeger-core"
+version = "@jaeger.version@"
 
-    [[platform.libraries]]
-    artifactId = "jaeger-core"
-    version = "@jaeger.version@"
-    path = "./lib/jaeger-core-@jaeger.version@.jar"
-    groupId = "io.jaegertracing"
-    modules = ["jaeger"]
+[[platform.java11.dependency]]
+path = "./lib/jaeger-thrift-@jaeger.version@.jar"
+groupId = "io.jaegertracing"
+artifactId = "jaeger-thrift"
+version = "@jaeger.version@"
 
-    [[platform.libraries]]
-    artifactId = "jaeger-thrift"
-    version = "@jaeger.version@"
-    path = "./lib/jaeger-thrift-@jaeger.version@.jar"
-    groupId = "io.jaegertracing"
-    modules = ["jaeger"]
+[[platform.java11.dependency]]
+path = "./lib/libthrift-@libthrift.version@.jar"
+groupId = "org.apache.thrift"
+artifactId = "libthrift"
+version = "@libthrift.version@"
 
-    [[platform.libraries]]
-    artifactId = "libthrift"
-    version = "@libthrift.version@"
-    path = "./lib/libthrift-@libthrift.version@.jar"
-    groupId = "org.apache.thrift"
-    modules = ["jaeger"]
+[[platform.java11.dependency]]
+path = "./lib/okhttp-@okhttp.version@.jar"
+groupId = "com.squareup.okhttp3"
+artifactId = "okhttp"
+version = "@okhttp.version@"
 
-    [[platform.libraries]]
-    artifactId = "okhttp"
-    version = "@okhttp.version@"
-    path = "./lib/okhttp-@okhttp.version@.jar"
-    groupId = "com.squareup.okhttp3"
-    modules = ["jaeger"]
-
-    [[platform.libraries]]
-    artifactId = "okio"
-    version = "@okio.version@"
-    path = "./lib/okio-@okio.version@.jar"
-    groupId = "com.squareup.okio"
-    modules = ["jaeger"]
+[[platform.java11.dependency]]
+path = "./lib/okio-@okio.version@.jar"
+groupId = "com.squareup.okio"
+artifactId = "okio"
+version = "@okio.version@"

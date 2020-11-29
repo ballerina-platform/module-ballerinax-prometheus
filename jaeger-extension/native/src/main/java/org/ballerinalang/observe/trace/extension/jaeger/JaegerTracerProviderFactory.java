@@ -18,7 +18,7 @@
 package org.ballerinalang.observe.trace.extension.jaeger;
 
 import io.ballerina.runtime.api.Module;
-import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.observability.tracer.spi.TracerProvider;
 import io.ballerina.runtime.observability.tracer.spi.TracerProviderFactory;
@@ -28,7 +28,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Properties;
 
-import static io.ballerina.runtime.util.BLangConstants.BALLERINA_BUILTIN_PKG_PREFIX;
+import static io.ballerina.runtime.api.constants.RuntimeConstants.BALLERINA_BUILTIN_PKG_PREFIX;
 import static org.ballerinalang.observe.trace.extension.jaeger.Constants.JAEGER_PACKAGE;
 import static org.ballerinalang.observe.trace.extension.jaeger.Constants.MODULE_VERSION_PROPERTY_KEY;
 import static org.ballerinalang.observe.trace.extension.jaeger.Constants.TRACER_NAME;

@@ -78,25 +78,11 @@ def copyDistributions (distributionConfigurations) {
         /* Standard Libraries */
         distributionConfigurations.resolvedConfiguration.resolvedArtifacts.each { artifact ->
             def artifactExtractedPath = "${project.buildDir}/extracted-distributions/" + artifact.name + "-zip"
-            into("bir-cache/") {
-                from "${artifactExtractedPath}/caches/bir"
+            into("repo/balo") {
+                from "${artifactExtractedPath}/balo"
             }
-            into("bre/lib/") {
-                from "${artifactExtractedPath}/libs"
-            }
-            into("docs/") {
-                from "${artifactExtractedPath}/docs"
-            }
-
-            // pack to new cache
-            into("cache/bir/") {
-                from "${artifactExtractedPath}/caches/bir"
-            }
-            into("cache/balo/") {
-                from "${artifactExtractedPath}/caches/balo"
-            }
-            into("cache/jar/") {
-                from "${artifactExtractedPath}/caches/jar"
+            into("repo/cache") {
+                from "${artifactExtractedPath}/cache"
             }
         }
     }

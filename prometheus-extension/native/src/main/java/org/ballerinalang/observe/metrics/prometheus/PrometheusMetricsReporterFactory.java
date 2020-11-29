@@ -18,7 +18,7 @@
 package org.ballerinalang.observe.metrics.prometheus;
 
 import io.ballerina.runtime.api.Module;
-import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.observability.metrics.spi.MetricReporterFactory;
 
@@ -27,7 +27,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Properties;
 
-import static io.ballerina.runtime.util.BLangConstants.BALLERINA_BUILTIN_PKG_PREFIX;
+import static io.ballerina.runtime.api.constants.RuntimeConstants.BALLERINA_BUILTIN_PKG_PREFIX;
 
 /**
  * This is the reporter extension for the Prometheus.

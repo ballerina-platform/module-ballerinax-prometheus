@@ -45,7 +45,7 @@ public class MetricReporter {
     }
 }
 
-public isolated function startReporter() returns error? {
+isolated function startReporter() returns error? {
     http:Listener httpListener = new(REPORTER_PORT, config = {
         host: REPORTER_HOST
     });
