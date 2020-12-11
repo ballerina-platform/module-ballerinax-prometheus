@@ -28,7 +28,6 @@
     <test name="ballerina-observability-tests" parallel="false">
         <classes>
             <class name="org.ballerinalang.observe.PrometheusMetricsTestCase"/>
-            <class name="org.ballerinalang.observe.JaegerTracesTestCase"/>
         </classes>
     </test>
 </suite>

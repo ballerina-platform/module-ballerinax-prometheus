@@ -40,7 +40,7 @@ name = "observe"
 version = "@stdlib.observe.version@"
 
 [[platform.java11.dependency]]
-path = "../native/build/libs/prometheus-extension-native-@project.version@.jar"
+path = "../prometheus-extension-native/build/libs/prometheus-extension-native-@project.version@.jar"
 groupId = "ballerina"
 artifactId = "prometheus-extension-native"
 version = "@project.version@"

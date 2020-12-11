@@ -27,7 +27,6 @@ configurations {
 
 dependencies {
     observabilityExtensions project(path: ':prometheus-extension-ballerina', configuration: 'distribution')
-    observabilityExtensions project(path: ':jaeger-extension-ballerina', configuration: 'distribution')
 
     testImplementation "org.ballerinalang:ballerina-runtime:${ballerinaLangVersion}"
     testImplementation "org.ballerinalang:ballerina-logging:${ballerinaLangVersion}"

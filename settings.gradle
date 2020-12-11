@@ -18,21 +18,17 @@ plugins {
     id "com.gradle.enterprise" version "3.2"
 }
 
-rootProject.name = 'ballerina-observability-parent'
+rootProject.name = 'module-ballerinax-prometheus'
 
 include(':build-config:checkstyle')
 include(':prometheus-extension-ballerina')
 include(':prometheus-extension-native')
-include(':jaeger-extension-ballerina')
-include(':jaeger-extension-native')
-include(':extension-integration-tests')
+include(':prometheus-extension-tests')
 
 project(':build-config:checkstyle').projectDir = file('build-config/checkstyle')
-project(':prometheus-extension-ballerina').projectDir = file('prometheus-extension/ballerina')
-project(':prometheus-extension-native').projectDir = file('prometheus-extension/native')
-project(':jaeger-extension-ballerina').projectDir = file('jaeger-extension/ballerina')
-project(':jaeger-extension-native').projectDir = file('jaeger-extension/native')
-project(':extension-integration-tests').projectDir = file('integration-tests')
+project(':prometheus-extension-ballerina').projectDir = file('prometheus-extension-ballerina')
+project(':prometheus-extension-native').projectDir = file('prometheus-extension-native')
+project(':prometheus-extension-tests').projectDir = file('prometheus-extension-tests')
 
 gradleEnterprise {
     buildScan {

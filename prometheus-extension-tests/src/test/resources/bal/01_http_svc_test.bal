@@ -15,7 +15,7 @@
 // under the License.
 
 import ballerina/http;
-import ballerina/observe; import ballerina/prometheus as _; import ballerina/jaeger as _;   // TODO: Remove extension module imports
+import ballerina/observe; import ballerina/prometheus as _;   // TODO: Remove extension module imports
 
 @http:ServiceConfig {
     basePath:"/test"
