@@ -49,19 +49,14 @@ isolated function startReporter() returns error? {
     http:Listener httpListener = new(REPORTER_PORT, config = {
         host: REPORTER_HOST
     });
-    service prometheusReporter =
-        @http:ServiceConfig {
-            basePath: "/metrics"
-        }
-        service {
+    service object {} prometheusReporter =
+        service object {
             # This method retrieves all metrics registered in the ballerina metrics registry,
             # and reformats based on the expected format by prometheus server.
             @http:ResourceConfig {
-                methods: ["GET"],
-                path: "/",
                 produces: ["application/text"]
             }
-            resource function getMetrics(http:Caller caller, http:Request req) {
+            resource function get metrics(http:Caller caller, http:Request req) {
                 observe:Metric?[] metrics = observe:getAllMetrics();
                 string payload = EMPTY_STRING;
                 foreach var m in metrics {
@@ -102,8 +97,8 @@ isolated function startReporter() returns error? {
                 checkpanic caller->respond(res);
             }
         };
-    check httpListener.__attach(prometheusReporter);
-    check httpListener.__start();
+    check httpListener.attach(prometheusReporter, "/");
+    check httpListener.start();
 }
 
 # This util function creates the type description based on the prometheus format for the specific metric.

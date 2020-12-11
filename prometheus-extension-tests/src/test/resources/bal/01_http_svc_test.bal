@@ -17,14 +17,8 @@
 import ballerina/http;
 import ballerina/observe; import ballerina/prometheus as _;   // TODO: Remove extension module imports
 
-@http:ServiceConfig {
-    basePath:"/test"
-}
-service metricsTest on new http:Listener(9091) {
-    @http:ResourceConfig {
-        path: "/sum"
-    }
-    resource function testCase(http:Caller caller, http:Request req) {
+service /test on new http:Listener(9091) {
+    resource function get sum(http:Caller caller, http:Request req) {
         ObservableAdderClass adder = new ObservableAdder(20, 33);
         var sum = adder.getSum();
 
