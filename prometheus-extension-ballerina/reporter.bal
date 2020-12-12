@@ -32,7 +32,7 @@ final string REPORTER_HOST = config:getAsString(PROMETHEUS_HOST_CONFIG, "0.0.0.0
 const string EXPIRY_TAG = "timeWindow";
 const string PERCENTILE_TAG = "quantile";
 
-# Extension class created by Prometheus MetricReporter
+# Prometheus Metrics Reporter instance capable of starting a server to serve prometheus metrics.
 public class MetricReporter {
     # Handle Metrics Reporter start.
     #

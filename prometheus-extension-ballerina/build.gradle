@@ -90,7 +90,7 @@ task copyStdlibs(type: Copy) {
 }
 
 def packageName = "prometheus"
-def packageOrg = "ballerina"
+def packageOrg = "ballerinax"
 def ballerinaConfigFile = new File("${project.projectDir}/Ballerina.toml")
 def artifactBallerinaDocs = file("${project.projectDir}/build/docs_parent/")
 def artifactCacheParent = file("${project.buildDir}/cache_parent/")

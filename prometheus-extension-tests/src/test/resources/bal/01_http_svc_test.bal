@@ -15,7 +15,7 @@
 // under the License.
 
 import ballerina/http;
-import ballerina/observe; import ballerina/prometheus as _;   // TODO: Remove extension module imports
+import ballerina/observe; import ballerinax/prometheus as _;   // TODO: Remove extension module imports
 
 service /test on new http:Listener(9091) {
     resource function get sum(http:Caller caller, http:Request req) {

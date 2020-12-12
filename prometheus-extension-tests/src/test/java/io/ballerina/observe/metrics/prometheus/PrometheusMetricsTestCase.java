@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ballerinalang.observe;
+package io.ballerina.observe.metrics.prometheus;
 
 import org.ballerinalang.test.context.BServerInstance;
 import org.ballerinalang.test.context.LogLeecher;

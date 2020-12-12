@@ -15,7 +15,7 @@
  * under the License.
  *
  */
-package org.ballerinalang.observe.metrics.prometheus;
+package io.ballerina.observe.metrics.prometheus;
 
 import io.ballerina.runtime.api.Module;
 import io.ballerina.runtime.api.creators.ValueCreator;
@@ -27,21 +27,20 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Properties;
 
-import static io.ballerina.runtime.api.constants.RuntimeConstants.BALLERINA_BUILTIN_PKG_PREFIX;
-
 /**
  * This is the reporter extension for the Prometheus.
  *
- * @since 0.980.0
+ * @since 2.0.0
  */
 public class PrometheusMetricsReporterFactory implements MetricReporterFactory {
     private static final PrintStream console = System.out;
 
-    private static final String REPORTER_NAME = "prometheus";
-
     private static final String REPORTER_PROPERTIES_FILE = "prometheus-reporter.properties";
     private static final String MODULE_VERSION_PROPERTY_KEY = "moduleVersion";
-    private static final String PROMETHEUS_PACKAGE = "prometheus";
+
+    private static final String REPORTER_NAME = "prometheus";
+    private static final String PROMETHEUS_PACKAGE_ORG = "ballerinax";
+    private static final String PROMETHEUS_PACKAGE_NAME = "prometheus";
 
     @Override
     public String getName() {
@@ -60,7 +59,7 @@ public class PrometheusMetricsReporterFactory implements MetricReporterFactory {
             console.println("ballerina: unexpected failure in detecting Prometheus extension version");
             return null;
         }
-        Module prometheusModule = new Module(BALLERINA_BUILTIN_PKG_PREFIX, PROMETHEUS_PACKAGE, prometheusModuleVersion);
+        Module prometheusModule = new Module(PROMETHEUS_PACKAGE_ORG, PROMETHEUS_PACKAGE_NAME, prometheusModuleVersion);
         return ValueCreator.createObjectValue(prometheusModule, "MetricReporter");
     }
 }

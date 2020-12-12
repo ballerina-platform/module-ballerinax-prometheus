@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-description = 'Ballerina - Extension Integration Tests'
+description = 'Ballerina - Prometheus Extension Tests'
 
 configurations {
     observabilityExtensions {
