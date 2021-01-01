@@ -20,18 +20,17 @@ package io.ballerina.observe.metrics.prometheus;
 import org.ballerinalang.test.context.BServerInstance;
 import org.ballerinalang.test.context.LogLeecher;
 import org.ballerinalang.test.util.HttpClientRequest;
+import org.ballerinalang.test.util.HttpResponse;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,8 +48,11 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
 
     private static final File RESOURCES_DIR = Paths.get("src", "test", "resources", "bal").toFile();
     private static final Pattern PROMETHEUS_METRIC_VALUE_REGEX = Pattern.compile("[-+]?\\d*\\.?\\d+([eE][-+]?\\d+)?");
-    private static final String PROMETHEUS_METRICS_URL = "http://localhost:9797/metrics";
     private static final String TEST_RESOURCE_URL = "http://localhost:9091/test/sum";
+
+    private static final String PROMETHEUS_EXTENSION_LOG_PREFIX = "ballerina: enabled prometheus metrics reporter";
+    private static final String HTTP_SERVER_LOG_PREFIX = "[ballerina/http] started HTTP/WS listener ";
+    private static final String SAMPLE_SERVER_LOG = HTTP_SERVER_LOG_PREFIX + "0.0.0.0:9091";
 
     @BeforeMethod
     public void setup() throws Exception {
@@ -62,8 +64,19 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
         serverInstance.shutdownServer();
     }
 
-    @Test
-    public void testPrometheusMetrics() throws Exception {
+    @DataProvider(name = "test-prometheus-metrics-data")
+    public Object[][] getTestPrometheusMetricsData() {
+        final String prometheusConfTable = "--b7a.observability.metrics.prometheus";
+        return new Object[][]{
+                {"0.0.0.0:9797", "http://localhost:9797/metrics", new String[0]},
+                {"127.0.0.1:10097", "http://127.0.0.1:10097/metrics",
+                        new String[]{prometheusConfTable + ".host=127.0.0.1", prometheusConfTable + ".port=10097"}}
+        };
+    }
+
+    @Test(dataProvider = "test-prometheus-metrics-data")
+    public void testPrometheusMetrics(String prometheusServiceBindAddress, String prometheusScrapeURL,
+                                      String[] additionalRuntimeArgs) throws Exception {
         final Map<String, Pattern> expectedMetrics = new HashMap<>();
         expectedMetrics.put("requests_total_value{src_service_resource=\"true\",listener_name=\"http\"," +
                 "src_resource_path=\"/sum\",src_module=\"_anon/.:0.0.0\",src_resource_accessor=\"get\"," +
@@ -102,39 +115,46 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
                 "src_position=\"01_http_svc_test.bal:27:20\",src_function_name=\"respond\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
 
-        LogLeecher prometheusServerLogLeecher = new LogLeecher(
-                "[ballerina/http] started HTTP/WS listener 0.0.0.0:9797");
+        LogLeecher prometheusExtLogLeecher = new LogLeecher(PROMETHEUS_EXTENSION_LOG_PREFIX);
+        serverInstance.addLogLeecher(prometheusExtLogLeecher);
+        LogLeecher prometheusServerLogLeecher = new LogLeecher(HTTP_SERVER_LOG_PREFIX + prometheusServiceBindAddress);
         serverInstance.addLogLeecher(prometheusServerLogLeecher);
-        LogLeecher errorLogLeacher = new LogLeecher("error");
-        serverInstance.addErrorLogLeecher(errorLogLeacher);
+        LogLeecher sampleServerLogLeecher = new LogLeecher(SAMPLE_SERVER_LOG);
+        serverInstance.addLogLeecher(sampleServerLogLeecher);
+        LogLeecher errorLogLeecher = new LogLeecher("error");
+        serverInstance.addErrorLogLeecher(errorLogLeecher);
+        LogLeecher exceptionLogLeecher = new LogLeecher("Exception");
+        serverInstance.addErrorLogLeecher(exceptionLogLeecher);
 
-        final String[] runtimeArgs = new String[]{
+        final List<String> runtimeArgs = new ArrayList<>(Arrays.asList(
                 "--" + CONFIG_METRICS_ENABLED + "=true",
                 "--" + CONFIG_TABLE_METRICS + ".statistic.percentiles=0.5, 0.75, 0.98, 0.99, 0.999"
-        };
+        ));
+        runtimeArgs.addAll(Arrays.asList(additionalRuntimeArgs));
         final String balFile = Paths.get(RESOURCES_DIR.getAbsolutePath(), "01_http_svc_test.bal").toFile()
                 .getAbsolutePath();
-        serverInstance.startServer(balFile, null, runtimeArgs, new int[] { 9091, 9797 });
+        serverInstance.startServer(balFile, null, runtimeArgs.toArray(new String[0]), new int[] { 9091, 9797 });
+        sampleServerLogLeecher.waitForText(1000);
+        prometheusExtLogLeecher.waitForText(1000);
         prometheusServerLogLeecher.waitForText(1000);
 
         // Send requests to generate metrics
         int i = 0;
         while (i < 5) {
-            String responseData = HttpClientRequest.doGet(TEST_RESOURCE_URL).getData();
+            HttpResponse response = HttpClientRequest.doGet(TEST_RESOURCE_URL);
+            Assert.assertEquals(response.getResponseCode(), 200);
+            String responseData = response.getData();
             Assert.assertEquals(responseData, "Sum: 53");
             i++;
         }
         Thread.sleep(1000);
 
         // Read metrics from Prometheus endpoint
-        URL metricsEndPoint = new URL(PROMETHEUS_METRICS_URL);
-        List<String> metricsList;
-        InputStream inputStream = metricsEndPoint.openConnection().getInputStream();
-        try (InputStreamReader isReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
-            try (BufferedReader bufferedReader = new BufferedReader(isReader)) {
-                metricsList = bufferedReader.lines().filter(s -> !s.startsWith("#")).collect(Collectors.toList());
-            }
-        }
+        HttpResponse response = HttpClientRequest.doGetAndPreserveNewlineInResponseData(prometheusScrapeURL);
+        Assert.assertEquals(response.getResponseCode(), 200);
+        List<String> metricsList = response.getData().lines()
+                .filter(s -> !s.startsWith("#"))
+                .collect(Collectors.toList());
 
         Assert.assertTrue(metricsList.size() != 0);
         int count = 0;
@@ -150,25 +170,34 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
                                 + pattern.pattern() + " Complete line: " + line);
             }
         }
-        Assert.assertEquals(count, expectedMetrics.size(), "metrics count is not equal to the expected metrics count.");
-        Assert.assertFalse(errorLogLeacher.isTextFound(), "Unexpected error log found");
+        Assert.assertEquals(count, expectedMetrics.size(), "Metrics count is not equal to the expected metrics count.");
+        Assert.assertFalse(errorLogLeecher.isTextFound(), "Unexpected error log found");
+        Assert.assertFalse(exceptionLogLeecher.isTextFound(), "Unexpected exception log found");
     }
 
     @Test
     public void testPrometheusDisabled() throws Exception {
-        LogLeecher prometheusServerLogLeecher = new LogLeecher(
-                "[ballerina/http] started HTTP/WS listener 0.0.0.0:9797");
+        LogLeecher sampleServerLogLeecher = new LogLeecher(SAMPLE_SERVER_LOG);
+        serverInstance.addLogLeecher(sampleServerLogLeecher);
+        LogLeecher prometheusExtLogLeecher = new LogLeecher(PROMETHEUS_EXTENSION_LOG_PREFIX);
+        serverInstance.addLogLeecher(prometheusExtLogLeecher);
+        LogLeecher prometheusServerLogLeecher = new LogLeecher(HTTP_SERVER_LOG_PREFIX + "0.0.0.0:9797");
         serverInstance.addLogLeecher(prometheusServerLogLeecher);
-        LogLeecher errorLogLeacher = new LogLeecher("error");
-        serverInstance.addErrorLogLeecher(errorLogLeacher);
+        LogLeecher errorLogLeecher = new LogLeecher("error");
+        serverInstance.addErrorLogLeecher(errorLogLeecher);
+        LogLeecher exceptionLogLeecher = new LogLeecher("Exception");
+        serverInstance.addErrorLogLeecher(exceptionLogLeecher);
 
         final String balFile = Paths.get(RESOURCES_DIR.getAbsolutePath(), "01_http_svc_test.bal").toFile()
                 .getAbsolutePath();
         serverInstance.startServer(balFile, null, null, new int[] { 9091 });
+        sampleServerLogLeecher.waitForText(1000);
 
         String responseData = HttpClientRequest.doGet(TEST_RESOURCE_URL).getData();
         Assert.assertEquals(responseData, "Sum: 53");
+        Assert.assertFalse(prometheusExtLogLeecher.isTextFound(), "Prometheus extension not expected to enable");
         Assert.assertFalse(prometheusServerLogLeecher.isTextFound(), "Prometheus extension not expected to start");
-        Assert.assertFalse(errorLogLeacher.isTextFound(), "Unexpected error log found");
+        Assert.assertFalse(errorLogLeecher.isTextFound(), "Unexpected error log found");
+        Assert.assertFalse(exceptionLogLeecher.isTextFound(), "Unexpected exception log found");
     }
 }

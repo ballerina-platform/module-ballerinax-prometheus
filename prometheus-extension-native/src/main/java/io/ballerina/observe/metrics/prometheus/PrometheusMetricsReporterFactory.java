@@ -34,13 +34,14 @@ import java.util.Properties;
  */
 public class PrometheusMetricsReporterFactory implements MetricReporterFactory {
     private static final PrintStream console = System.out;
-
-    private static final String REPORTER_PROPERTIES_FILE = "prometheus-reporter.properties";
-    private static final String MODULE_VERSION_PROPERTY_KEY = "moduleVersion";
+    private static final PrintStream consoleError = System.err;
 
     private static final String REPORTER_NAME = "prometheus";
-    private static final String PROMETHEUS_PACKAGE_ORG = "ballerinax";
-    private static final String PROMETHEUS_PACKAGE_NAME = "prometheus";
+
+    private static final String REPORTER_PROPERTIES_FILE = "prometheus-reporter.properties";
+    private static final String PACKAGE_VERSION_PROPERTY_KEY = "moduleVersion";
+    private static final String PACKAGE_ORG = "ballerinax";
+    private static final String PACKAGE_NAME = "prometheus";
 
     @Override
     public String getName() {
@@ -54,12 +55,14 @@ public class PrometheusMetricsReporterFactory implements MetricReporterFactory {
             InputStream stream = getClass().getClassLoader().getResourceAsStream(REPORTER_PROPERTIES_FILE);
             Properties reporterProperties = new Properties();
             reporterProperties.load(stream);
-            prometheusModuleVersion = (String) reporterProperties.get(MODULE_VERSION_PROPERTY_KEY);
+            prometheusModuleVersion = (String) reporterProperties.get(PACKAGE_VERSION_PROPERTY_KEY);
         } catch (IOException | ClassCastException e) {
-            console.println("ballerina: unexpected failure in detecting Prometheus extension version");
+            consoleError.println("error: unexpected failure in detecting Prometheus extension version");
             return null;
         }
-        Module prometheusModule = new Module(PROMETHEUS_PACKAGE_ORG, PROMETHEUS_PACKAGE_NAME, prometheusModuleVersion);
-        return ValueCreator.createObjectValue(prometheusModule, "MetricReporter");
+        Module prometheusModule = new Module(PACKAGE_ORG, PACKAGE_NAME, prometheusModuleVersion);
+        BObject metricReporter = ValueCreator.createObjectValue(prometheusModule, "MetricReporter");
+        console.println("ballerina: enabled prometheus metrics reporter");
+        return metricReporter;
     }
 }
