@@ -198,7 +198,7 @@ subprojects {
             html.enabled true
         }
         def excludeFile = file('spotbugs-exclude.xml')
-        if(excludeFile.exists()) {
+        if (excludeFile.exists()) {
             it.excludeFilter = excludeFile
         }
     }
@@ -211,7 +211,7 @@ subprojects {
             html.enabled true
         }
         def excludeFile = file('spotbugs-test-exclude.xml')
-        if(excludeFile.exists()) {
+        if (excludeFile.exists()) {
             it.excludeFilter = excludeFile
         }
     }

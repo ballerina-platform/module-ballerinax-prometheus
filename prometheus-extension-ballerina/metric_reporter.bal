@@ -32,12 +32,13 @@ final string REPORTER_HOST = config:getAsString(PROMETHEUS_HOST_CONFIG, "0.0.0.0
 const string EXPIRY_TAG = "timeWindow";
 const string PERCENTILE_TAG = "quantile";
 
-# Prometheus Metrics Reporter instance capable of starting a server to serve prometheus metrics.
+# Extension class created by PrometheusMetricProviderFactory.
+# This starts a server to serve prometheus metrics.
 public class MetricReporter {
     # Handle Metrics Reporter start.
     #
     # + return - `()` if no error occurred, and an error otherwise
-    public isolated function initialize() returns error? {
+    public function initialize() returns error? {
         var err = startReporter();
         if (err is error) {
             return error("failed to start prometheus exporter", err);
@@ -45,7 +46,7 @@ public class MetricReporter {
     }
 }
 
-isolated function startReporter() returns error? {
+function startReporter() returns error? {
     http:Listener httpListener = new(REPORTER_PORT, config = {
         host: REPORTER_HOST
     });
