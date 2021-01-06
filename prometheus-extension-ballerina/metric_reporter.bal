@@ -19,6 +19,7 @@ import ballerina/http;
 import ballerina/lang.'string as str;
 import ballerina/observe;
 import ballerina/stringutils;
+import ballerina/java as _;     // To allow packaging Java native code
 
 const string METRIC_TYPE_GAUGE = "gauge";
 const string METRIC_TYPE_SUMMARY = "summary";
