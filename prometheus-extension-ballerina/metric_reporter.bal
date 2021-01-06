@@ -38,7 +38,7 @@ public class MetricReporter {
     # Handle Metrics Reporter start.
     #
     # + return - `()` if no error occurred, and an error otherwise
-    public function initialize() returns error? {
+    public isolated function initialize() returns error? {
         var err = startReporter();
         if (err is error) {
             return error("failed to start prometheus exporter", err);
@@ -46,7 +46,7 @@ public class MetricReporter {
     }
 }
 
-function startReporter() returns error? {
+isolated function startReporter() returns error? {
     http:Listener httpListener = new(REPORTER_PORT, config = {
         host: REPORTER_HOST
     });

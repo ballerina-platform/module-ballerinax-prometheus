@@ -128,14 +128,16 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
 
         final List<String> runtimeArgs = new ArrayList<>(Arrays.asList(
                 "--" + CONFIG_METRICS_ENABLED + "=true",
+                "--" + CONFIG_TABLE_METRICS + ".reporter=prometheus",
                 "--" + CONFIG_TABLE_METRICS + ".statistic.percentiles=0.5, 0.75, 0.98, 0.99, 0.999"
         ));
         runtimeArgs.addAll(Arrays.asList(additionalRuntimeArgs));
         final String balFile = Paths.get(RESOURCES_DIR.getAbsolutePath(), "01_http_svc_test.bal").toFile()
                 .getAbsolutePath();
-        serverInstance.startServer(balFile, null, runtimeArgs.toArray(new String[0]), new int[] { 9091, 9797 });
-        sampleServerLogLeecher.waitForText(1000);
+        serverInstance.startServer(balFile, new String[]{"--observability-included"},
+                runtimeArgs.toArray(new String[0]), new int[] { 9091, 9797 });
         prometheusExtLogLeecher.waitForText(1000);
+        sampleServerLogLeecher.waitForText(1000);
         prometheusServerLogLeecher.waitForText(1000);
 
         // Send requests to generate metrics
@@ -195,6 +197,7 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
 
         String responseData = HttpClientRequest.doGet(TEST_RESOURCE_URL).getData();
         Assert.assertEquals(responseData, "Sum: 53");
+
         Assert.assertFalse(prometheusExtLogLeecher.isTextFound(), "Prometheus extension not expected to enable");
         Assert.assertFalse(prometheusServerLogLeecher.isTextFound(), "Prometheus extension not expected to start");
         Assert.assertFalse(errorLogLeecher.isTextFound(), "Unexpected error log found");

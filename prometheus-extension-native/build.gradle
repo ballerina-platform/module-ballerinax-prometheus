@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+description = 'Ballerina - Prometheus Extension - Native Module'
+
 plugins {
     id 'java'
 }
-
-description = 'Ballerina - Prometheus Extension - Native Module'
 
 dependencies {
     implementation "org.ballerinalang:ballerina-runtime:${ballerinaLangVersion}"
