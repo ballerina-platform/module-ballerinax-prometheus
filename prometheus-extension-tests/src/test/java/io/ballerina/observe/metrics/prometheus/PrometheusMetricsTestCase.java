@@ -78,41 +78,57 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
     public void testPrometheusMetrics(String prometheusServiceBindAddress, String prometheusScrapeURL,
                                       String[] additionalRuntimeArgs) throws Exception {
         final Map<String, Pattern> expectedMetrics = new HashMap<>();
-        expectedMetrics.put("requests_total_value{src_service_resource=\"true\",listener_name=\"http\"," +
+        expectedMetrics.put("requests_total_value{src_service_resource=\"true\"," +
+                "entrypoint_function_position=\"01_http_svc_test.bal:21:5\",listener_name=\"http\"," +
                 "src_resource_path=\"/sum\",src_module=\"_anon/.:0.0.0\",src_resource_accessor=\"get\"," +
-                "src_position=\"01_http_svc_test.bal:21:5\",protocol=\"http\",src_object_name=\"_anonType__0\"," +
+                "src_position=\"01_http_svc_test.bal:21:5\",protocol=\"http\"," +
+                "entrypoint_function_module=\"_anon/.:0.0.0\",src_object_name=\"_anonType__0\"," +
                 "http_url=\"/test/sum\",http_method=\"GET\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
-        expectedMetrics.put("requests_total_value{src_object_name=\"ballerina/http/Caller\"," +
-                "src_module=\"_anon/.:0.0.0\",http_status_code_group=\"2xx\",src_client_remote=\"true\"," +
-                "src_position=\"01_http_svc_test.bal:27:20\",src_function_name=\"respond\",}",
+        expectedMetrics.put("requests_total_value{entrypoint_function_position=\"01_http_svc_test.bal:21:5\"," +
+                "src_object_name=\"ballerina/http/Caller\",src_module=\"_anon/.:0.0.0\"," +
+                "http_status_code_group=\"2xx\",src_client_remote=\"true\"," +
+                "src_position=\"01_http_svc_test.bal:27:20\",src_function_name=\"respond\"," +
+                "entrypoint_function_module=\"_anon/.:0.0.0\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
-        expectedMetrics.put("inprogress_requests_value{src_service_resource=\"true\",listener_name=\"http\"," +
-                "src_resource_path=\"/sum\",src_module=\"_anon/.:0.0.0\",src_resource_accessor=\"get\"," +
-                "src_position=\"01_http_svc_test.bal:21:5\",protocol=\"http\",src_object_name=\"_anonType__0\"," +
-                "http_url=\"/test/sum\",http_method=\"GET\",}",
-                PROMETHEUS_METRIC_VALUE_REGEX);
-        expectedMetrics.put("inprogress_requests_value{src_object_name=\"ballerina/http/Caller\"," +
-                "src_module=\"_anon/.:0.0.0\",src_client_remote=\"true\",src_position=\"01_http_svc_test.bal:27:20\"," +
-                "src_function_name=\"respond\",}",
-                PROMETHEUS_METRIC_VALUE_REGEX);
-        expectedMetrics.put("response_time_nanoseconds_total_value{src_service_resource=\"true\"," +
-                "listener_name=\"http\",src_resource_path=\"/sum\",src_module=\"_anon/.:0.0.0\"," +
-                "src_resource_accessor=\"get\",src_position=\"01_http_svc_test.bal:21:5\",protocol=\"http\"," +
+        expectedMetrics.put("inprogress_requests_value{listener_name=\"http\",src_module=\"_anon/.:0.0.0\"," +
+                "src_position=\"01_http_svc_test.bal:21:5\",protocol=\"http\",src_service_resource=\"true\"," +
+                "entrypoint_function_position=\"01_http_svc_test.bal:21:5\",src_resource_path=\"/sum\"," +
+                "src_resource_accessor=\"get\",entrypoint_function_module=\"_anon/.:0.0.0\"," +
                 "src_object_name=\"_anonType__0\",http_url=\"/test/sum\",http_method=\"GET\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
-        expectedMetrics.put("response_time_nanoseconds_total_value{src_object_name=\"ballerina/http/Caller\"," +
-                "src_module=\"_anon/.:0.0.0\",http_status_code_group=\"2xx\",src_client_remote=\"true\"," +
-                "src_position=\"01_http_svc_test.bal:27:20\",src_function_name=\"respond\",}",
+        expectedMetrics.put("inprogress_requests_value{entrypoint_function_position=\"01_http_svc_test.bal:21:5\"," +
+                "src_object_name=\"ballerina/http/Caller\",src_module=\"_anon/.:0.0.0\",src_client_remote=\"true\"," +
+                "src_position=\"01_http_svc_test.bal:27:20\",src_function_name=\"respond\"," +
+                "entrypoint_function_module=\"_anon/.:0.0.0\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
-        expectedMetrics.put("response_time_seconds_value{src_service_resource=\"true\",listener_name=\"http\"," +
+        expectedMetrics.put("response_time_nanoseconds_total_value{src_service_resource=\"true\"," +
+                "entrypoint_function_position=\"01_http_svc_test.bal:21:5\",listener_name=\"http\"," +
                 "src_resource_path=\"/sum\",src_module=\"_anon/.:0.0.0\",src_resource_accessor=\"get\"," +
-                "src_position=\"01_http_svc_test.bal:21:5\",protocol=\"http\",src_object_name=\"_anonType__0\"," +
+                "src_position=\"01_http_svc_test.bal:21:5\",protocol=\"http\"," +
+                "entrypoint_function_module=\"_anon/.:0.0.0\",src_object_name=\"_anonType__0\"," +
                 "http_url=\"/test/sum\",http_method=\"GET\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
-        expectedMetrics.put("response_time_seconds_value{src_object_name=\"ballerina/http/Caller\"," +
-                "src_module=\"_anon/.:0.0.0\",http_status_code_group=\"2xx\",src_client_remote=\"true\"," +
-                "src_position=\"01_http_svc_test.bal:27:20\",src_function_name=\"respond\",}",
+        expectedMetrics.put("response_time_nanoseconds_total_value{" +
+                "entrypoint_function_position=\"01_http_svc_test.bal:21:5\"," +
+                "src_object_name=\"ballerina/http/Caller\",src_module=\"_anon/.:0.0.0\"," +
+                "http_status_code_group=\"2xx\",src_client_remote=\"true\"," +
+                "src_position=\"01_http_svc_test.bal:27:20\",src_function_name=\"respond\"," +
+                "entrypoint_function_module=\"_anon/.:0.0.0\",}",
+                PROMETHEUS_METRIC_VALUE_REGEX);
+        expectedMetrics.put("response_time_seconds_value{src_service_resource=\"true\"," +
+                "entrypoint_function_position=\"01_http_svc_test.bal:21:5\",listener_name=\"http\"," +
+                "src_resource_path=\"/sum\",src_module=\"_anon/.:0.0.0\",src_resource_accessor=\"get\"," +
+                "src_position=\"01_http_svc_test.bal:21:5\",protocol=\"http\"," +
+                "entrypoint_function_module=\"_anon/.:0.0.0\",src_object_name=\"_anonType__0\"," +
+                "http_url=\"/test/sum\",http_method=\"GET\",}",
+                PROMETHEUS_METRIC_VALUE_REGEX);
+        expectedMetrics.put("response_time_seconds_value{" +
+                "entrypoint_function_position=\"01_http_svc_test.bal:21:5\"," +
+                "src_object_name=\"ballerina/http/Caller\",src_module=\"_anon/.:0.0.0\"," +
+                "http_status_code_group=\"2xx\",src_client_remote=\"true\"," +
+                "src_position=\"01_http_svc_test.bal:27:20\",src_function_name=\"respond\"," +
+                "entrypoint_function_module=\"_anon/.:0.0.0\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
 
         LogLeecher prometheusExtLogLeecher = new LogLeecher(PROMETHEUS_EXTENSION_LOG_PREFIX);
