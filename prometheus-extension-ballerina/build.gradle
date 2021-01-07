@@ -102,7 +102,7 @@ def originalConfig = ballerinaConfigFile.text
 task updateTomlVerions {
     doLast {
         def stdlibDependentConfigVersion = project.stdlibConfigVersion.split("-")[0]
-        def stdlibDependentStringUtilsVersion = project.stdlibStringUtilsVersion.split("-")[0]
+        def stdlibDependentStringUtilsVersion = project.stdlibStringutilsVersion.split("-")[0]
         def stdlibDependentHttpVersion = project.stdlibHttpVersion.split("-")[0]
         def stdlibDependentObserveVersion = project.stdlibObserveVersion.split("-")[0]
 
