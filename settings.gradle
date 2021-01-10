@@ -22,12 +22,10 @@ rootProject.name = 'module-ballerinax-prometheus'
 
 include(':build-config:checkstyle')
 include(':prometheus-extension-ballerina')
-include(':prometheus-extension-native')
 include(':prometheus-extension-tests')
 
 project(':build-config:checkstyle').projectDir = file('build-config/checkstyle')
 project(':prometheus-extension-ballerina').projectDir = file('prometheus-extension-ballerina')
-project(':prometheus-extension-native').projectDir = file('prometheus-extension-native')
 project(':prometheus-extension-tests').projectDir = file('prometheus-extension-tests')
 
 gradleEnterprise {

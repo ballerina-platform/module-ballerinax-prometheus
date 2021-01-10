@@ -21,6 +21,11 @@ version = "@toml.version@"
 
 [[dependency]]
 org = "ballerina"
+name = "io"
+version = "@stdlib.io.version@"
+
+[[dependency]]
+org = "ballerina"
 name = "config"
 version = "@stdlib.config.version@"
 
@@ -38,9 +43,3 @@ version = "@stdlib.http.version@"
 org = "ballerina"
 name = "observe"
 version = "@stdlib.observe.version@"
-
-[[platform.java11.dependency]]
-path = "../prometheus-extension-native/build/libs/prometheus-extension-native-@project.version@.jar"
-groupId = "ballerina"
-artifactId = "prometheus-extension-native"
-version = "@project.version@"

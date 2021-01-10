@@ -14,6 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/io;
 import ballerina/config;
 import ballerina/http;
 import ballerina/lang.'string as str;
@@ -21,35 +22,42 @@ import ballerina/observe;
 import ballerina/stringutils;
 import ballerina/java as _;     // To allow packaging Java native code
 
+const REPORTER_NAME = "prometheus";
+
+const string OBSERVABILITY_METRICS_ENABLED_CONFIG = "b7a.observability.metrics.enabled";
+final boolean OBSERVABILITY_METRICS_ENABLED = config:getAsBoolean(OBSERVABILITY_METRICS_ENABLED_CONFIG, false);
+
+const string OBSERVABILITY_METRICS_REPORTER_NAME_CONFIG = "b7a.observability.metrics.reporter";
+final string OBSERVABILITY_METRICS_REPORTER_NAME = config:getAsString(OBSERVABILITY_METRICS_REPORTER_NAME_CONFIG, REPORTER_NAME);
+
+const string PROMETHEUS_PORT_CONFIG = "b7a.observability.metrics.prometheus.port";
+final int REPORTER_PORT = config:getAsInt(PROMETHEUS_PORT_CONFIG, 9797);
+
+const string PROMETHEUS_HOST_CONFIG = "b7a.observability.metrics.prometheus.host";
+final string REPORTER_HOST = config:getAsString(PROMETHEUS_HOST_CONFIG, "0.0.0.0");
+
 const string METRIC_TYPE_GAUGE = "gauge";
 const string METRIC_TYPE_SUMMARY = "summary";
 const string EMPTY_STRING = "";
 
-const string PROMETHEUS_PORT_CONFIG = "b7a.observability.metrics.prometheus.port";
-const string PROMETHEUS_HOST_CONFIG = "b7a.observability.metrics.prometheus.host";
-final int REPORTER_PORT = config:getAsInt(PROMETHEUS_PORT_CONFIG, 9797);
-final string REPORTER_HOST = config:getAsString(PROMETHEUS_HOST_CONFIG, "0.0.0.0");
-
 const string EXPIRY_TAG = "timeWindow";
 const string PERCENTILE_TAG = "quantile";
 
-# Extension class created by PrometheusMetricProviderFactory.
-# This starts a server to serve prometheus metrics.
-public class MetricReporter {
-    # Handle Metrics Reporter start.
-    #
-    # + return - `()` if no error occurred, and an error otherwise
-    public isolated function initialize() returns error? {
-        var err = startReporter();
+isolated function init() {
+    if (OBSERVABILITY_METRICS_ENABLED && OBSERVABILITY_METRICS_REPORTER_NAME == REPORTER_NAME) {
+        error? err = startReporter(REPORTER_HOST, REPORTER_PORT);
         if (err is error) {
-            return error("failed to start prometheus exporter", err);
+            io:println("error: failed to start prometheus metrics reporter");
+        } else {
+            io:println("ballerina: enabled prometheus metrics reporter");
         }
     }
 }
 
-isolated function startReporter() returns error? {
-    http:Listener httpListener = new(REPORTER_PORT, config = {
-        host: REPORTER_HOST
+# Start a server to serve prometheus metrics.
+isolated function startReporter(string host, int port) returns error? {
+    http:Listener httpListener = new(port, config = {
+        host: host
     });
     service object {} prometheusReporter =
         service object {

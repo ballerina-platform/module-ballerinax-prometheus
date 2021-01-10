@@ -19,9 +19,6 @@ import org.apache.tools.ant.taskdefs.condition.Os
 description = 'Ballerina - Prometheus Extension - Ballerina Module'
 
 configurations {
-    nativeJar {
-        transitive false
-    }
     externalJars {
         transitive false
     }
@@ -29,10 +26,6 @@ configurations {
         canBeConsumed true
         canBeResolved false
     }
-}
-
-dependencies {
-    nativeJar project(':prometheus-extension-native')
 }
 
 clean {
@@ -101,6 +94,7 @@ def originalConfig = ballerinaConfigFile.text
 
 task updateTomlVerions {
     doLast {
+        def stdlibDependentIoVersion = project.stdlibIoVersion.split("-")[0]
         def stdlibDependentConfigVersion = project.stdlibConfigVersion.split("-")[0]
         def stdlibDependentStringUtilsVersion = project.stdlibStringutilsVersion.split("-")[0]
         def stdlibDependentHttpVersion = project.stdlibHttpVersion.split("-")[0]
@@ -108,6 +102,7 @@ task updateTomlVerions {
 
         def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
         newConfig = newConfig.replace("@toml.version@", tomlVersion)
+        newConfig = newConfig.replace("@stdlib.io.version@", stdlibDependentIoVersion)
         newConfig = newConfig.replace("@stdlib.config.version@", stdlibDependentConfigVersion)
         newConfig = newConfig.replace("@stdlib.stringutils.version@", stdlibDependentStringUtilsVersion)
         newConfig = newConfig.replace("@stdlib.http.version@", stdlibDependentHttpVersion)
@@ -126,7 +121,6 @@ task ballerinaBuild {
     dependsOn copyExternalJarsToLib
     dependsOn copyStdlibs
     dependsOn updateTomlVerions
-    dependsOn configurations.nativeJar
     dependsOn configurations.externalJars
 
     inputs.dir file(project.projectDir)
