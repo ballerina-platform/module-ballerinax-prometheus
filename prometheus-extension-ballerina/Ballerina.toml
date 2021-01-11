@@ -38,8 +38,3 @@ version = "@stdlib.stringutils.version@"
 org = "ballerina"
 name = "http"
 version = "@stdlib.http.version@"
-
-[[dependency]]
-org = "ballerina"
-name = "observe"
-version = "@stdlib.observe.version@"

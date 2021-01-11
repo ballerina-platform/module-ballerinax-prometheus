@@ -98,7 +98,6 @@ task updateTomlVerions {
         def stdlibDependentConfigVersion = project.stdlibConfigVersion.split("-")[0]
         def stdlibDependentStringUtilsVersion = project.stdlibStringutilsVersion.split("-")[0]
         def stdlibDependentHttpVersion = project.stdlibHttpVersion.split("-")[0]
-        def stdlibDependentObserveVersion = project.stdlibObserveVersion.split("-")[0]
 
         def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
         newConfig = newConfig.replace("@toml.version@", tomlVersion)
@@ -106,7 +105,6 @@ task updateTomlVerions {
         newConfig = newConfig.replace("@stdlib.config.version@", stdlibDependentConfigVersion)
         newConfig = newConfig.replace("@stdlib.stringutils.version@", stdlibDependentStringUtilsVersion)
         newConfig = newConfig.replace("@stdlib.http.version@", stdlibDependentHttpVersion)
-        newConfig = newConfig.replace("@stdlib.observe.version@", stdlibDependentObserveVersion)
         ballerinaConfigFile.text = newConfig
     }
 }
