@@ -1,12 +1,14 @@
 name: Publish Release
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+  repository_dispatch:
+    types: [ stdlib-release-pipeline ]
 
 jobs:
   publish-release:
     runs-on: ubuntu-latest
+    if: github.repository_owner == 'ballerina-platform'
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 11
@@ -14,7 +16,7 @@ jobs:
         with:
           java-version: 11
       - name: Set version env variable
-        run: echo ::set-env name=VERSION::$((grep -w "version" | cut -d= -f2) < gradle.properties | cut -d- -f1)
+        run: echo "VERSION=$((grep -w 'version' | cut -d= -f2) < gradle.properties | cut -d- -f1)" >> $GITHUB_ENV
       - name: Pre release depenency version update
         env:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
@@ -40,13 +42,13 @@ jobs:
           ./gradlew -Pversion=${VERSION} publish -x test
       - name: Create Github release from the release tag
         run: |
-          curl --request POST 'https://api.github.com/repos/ballerina-platform/module-ballerina-http/releases' \
+          curl --request POST 'https://api.github.com/repos/ballerina-platform/module-ballerinax-prometheus/releases' \
           --header 'Accept: application/vnd.github.v3+json' \
           --header 'Authorization: Bearer ${{ secrets.BALLERINA_BOT_TOKEN }}' \
           --header 'Content-Type: application/json' \
           --data-raw '{
              "tag_name": "v'"$VERSION"'",
-             "name": "module-ballerina-http-v'"$VERSION"'"
+             "name": "module-ballerinax-prometheus-v'"$VERSION"'"
           }'
       - name: Post release PR
         env:
