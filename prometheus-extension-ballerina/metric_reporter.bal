@@ -55,6 +55,10 @@ isolated function init() {
 }
 
 # Start a server to serve prometheus metrics.
+#
+# + host - The host to which the prometheus service should bind to
+# + port - The port to which the prometheus service should bind to
+# + return - An error if starting the prometheus service failed
 isolated function startReporter(string host, int port) returns error? {
     http:Listener httpListener = new(port, config = {
         host: host
