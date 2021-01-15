@@ -1,14 +1,15 @@
-name: Build Master Branch
+name: Build Main Branch
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.repository_owner == 'ballerina-platform'
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 11
