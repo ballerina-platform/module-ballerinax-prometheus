@@ -20,7 +20,6 @@ import ballerina/http;
 import ballerina/lang.'string as str;
 import ballerina/observe;
 import ballerina/regex;
-import ballerina/java as _;     // To allow packaging Java native code
 
 const REPORTER_NAME = "prometheus";
 
