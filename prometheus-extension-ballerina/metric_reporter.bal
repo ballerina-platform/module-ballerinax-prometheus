@@ -19,7 +19,7 @@ import ballerina/config;
 import ballerina/http;
 import ballerina/lang.'string as str;
 import ballerina/observe;
-import ballerina/stringutils;
+import ballerina/regex;
 import ballerina/java as _;     // To allow packaging Java native code
 
 const REPORTER_NAME = "prometheus";
@@ -184,7 +184,7 @@ isolated function getTagsString(map<string> labels) returns string {
 # + str - string to be escaped.
 # + return - escaped string.
 isolated function getEscapedName(string str) returns string {
-    return stringutils:replaceAll(str, "[^a-zA-Z0-9:_]", "_");
+    return regex:replaceAll(str, "[^a-zA-Z0-9:_]", "_");
 }
 
 # Only [^a-zA-Z0-9\\/.:_* ] are valid in metric lable values, any other characters
@@ -193,7 +193,7 @@ isolated function getEscapedName(string str) returns string {
 # + str - string to be escaped.
 # + return - escaped string.
 isolated function getEscapedLabelValue(string str) returns string {
-    return stringutils:replaceAll(str, "[^a-zA-Z0-9\\/.:_* ]", "_");
+    return regex:replaceAll(str, "[^a-zA-Z0-9\\/.:_* ]", "_");
 }
 
 # Add the summary type name to summary type metrics.

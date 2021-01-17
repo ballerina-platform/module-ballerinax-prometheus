@@ -49,7 +49,7 @@ allprojects {
             }
         }
         maven {
-            url 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-stringutils'
+            url 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-regex'
             credentials {
                 username System.getenv("packageUser")
                 password System.getenv("packagePAT")
@@ -196,7 +196,7 @@ subprojects {
 
         // Standard Library Dependencies
         ballerinaStdLibs "org.ballerinalang:config-ballerina:${stdlibConfigVersion}"
-        ballerinaStdLibs "org.ballerinalang:stringutils-ballerina:${stdlibStringutilsVersion}"
+        ballerinaStdLibs "org.ballerinalang:regex-ballerina:${stdlibRegexVersion}"
         ballerinaStdLibs "org.ballerinalang:http-ballerina:${stdlibHttpVersion}"
 
         // Standard Library Transitive Dependencies
