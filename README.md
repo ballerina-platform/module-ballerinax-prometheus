@@ -4,7 +4,7 @@
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerinax-prometheus.svg)](https://github.com/ballerina-platform/module-ballerinax-prometheus/commits/main)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-The Prometheus Observability Extension is one of the tracing extensions of the<a target="_blank" href="https://ballerina.io/"> Ballerina</a> language.
+The Prometheus Observability Extension is one of the tracing extensions of the <a target="_blank" href="https://ballerina.io/">Ballerina</a> language.
 
 It provides an implementation for tracing and publishing traces to a Prometheus Server.
 
