@@ -7,6 +7,7 @@ on:
 jobs:
   ubuntu-build:
     runs-on: ubuntu-latest
+    if: github.repository_owner == 'ballerina-platform'
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 11
@@ -23,6 +24,7 @@ jobs:
 
   windows-build:
     runs-on: windows-latest
+    if: github.repository_owner == 'ballerina-platform'
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 11

@@ -31,8 +31,8 @@ version = "@stdlib.config.version@"
 
 [[dependency]]
 org = "ballerina"
-name = "stringutils"
-version = "@stdlib.stringutils.version@"
+name = "regex"
+version = "@stdlib.regex.version@"
 
 [[dependency]]
 org = "ballerina"
