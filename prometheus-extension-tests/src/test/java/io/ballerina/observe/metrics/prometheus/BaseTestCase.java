@@ -46,9 +46,9 @@ public class BaseTestCase {
     public void destroy() throws IOException {
         Path ballerinaInternalLog = Paths.get(balServer.getServerHome(), "ballerina-internal.log");
         if (Files.exists(ballerinaInternalLog)) {
-            LOGGER.severe("=== Ballerina Internal Log Start ===\n");
+            LOGGER.severe("=== Ballerina Internal Log Start ===");
             Files.lines(ballerinaInternalLog).forEach(LOGGER::severe);
-            LOGGER.severe("\n=== Ballerina Internal Log End ===");
+            LOGGER.severe("=== Ballerina Internal Log End ===");
         }
         balServer.cleanup();
     }
