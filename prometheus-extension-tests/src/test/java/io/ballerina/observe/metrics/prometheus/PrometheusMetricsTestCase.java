@@ -29,16 +29,11 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import static io.ballerina.runtime.observability.ObservabilityConstants.CONFIG_METRICS_ENABLED;
-import static io.ballerina.runtime.observability.ObservabilityConstants.CONFIG_TABLE_METRICS;
 
 /**
  * Integration test for Prometheus extension.
@@ -66,17 +61,15 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
 
     @DataProvider(name = "test-prometheus-metrics-data")
     public Object[][] getTestPrometheusMetricsData() {
-        final String prometheusConfTable = "--b7a.observability.metrics.prometheus";
         return new Object[][]{
-                {"0.0.0.0:9797", "http://localhost:9797/metrics", new String[0]},
-                {"127.0.0.1:10097", "http://127.0.0.1:10097/metrics",
-                        new String[]{prometheusConfTable + ".host=127.0.0.1", prometheusConfTable + ".port=10097"}}
+                {"0.0.0.0:9797", "http://localhost:9797/metrics", 9797, "default"},
+                {"127.0.0.1:10097", "http://127.0.0.1:10097/metrics", 10097, "overridden"}
         };
     }
 
     @Test(dataProvider = "test-prometheus-metrics-data")
     public void testPrometheusMetrics(String prometheusServiceBindAddress, String prometheusScrapeURL,
-                                      String[] additionalRuntimeArgs) throws Exception {
+                                      int prometheusPort, String configSubPath) throws Exception {
         final Map<String, Pattern> expectedMetrics = new HashMap<>();
         expectedMetrics.put("requests_total_value{src_service_resource=\"true\"," +
                 "entrypoint_function_position=\"01_http_svc_test.bal:21:5\",listener_name=\"http\"," +
@@ -142,16 +135,15 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
         LogLeecher exceptionLogLeecher = new LogLeecher("Exception");
         serverInstance.addErrorLogLeecher(exceptionLogLeecher);
 
-        final List<String> runtimeArgs = new ArrayList<>(Arrays.asList(
-                "--" + CONFIG_METRICS_ENABLED + "=true",
-                "--" + CONFIG_TABLE_METRICS + ".reporter=prometheus",
-                "--" + CONFIG_TABLE_METRICS + ".statistic.percentiles=0.5, 0.75, 0.98, 0.99, 0.999"
-        ));
-        runtimeArgs.addAll(Arrays.asList(additionalRuntimeArgs));
+        String configFile = Paths.get("src", "test", "resources", "configs", configSubPath).toFile()
+                .getAbsolutePath();
+        Map<String, String> env = new HashMap<>();
+        env.put("BALCONFIGFILE", configFile);
+
         final String balFile = Paths.get(RESOURCES_DIR.getAbsolutePath(), "01_http_svc_test.bal").toFile()
                 .getAbsolutePath();
         serverInstance.startServer(balFile, new String[]{"--observability-included"},
-                runtimeArgs.toArray(new String[0]), new int[] { 9091, 9797 });
+                null, env, new int[] { 9091, prometheusPort });
         prometheusExtLogLeecher.waitForText(1000);
         sampleServerLogLeecher.waitForText(1000);
         prometheusServerLogLeecher.waitForText(1000);

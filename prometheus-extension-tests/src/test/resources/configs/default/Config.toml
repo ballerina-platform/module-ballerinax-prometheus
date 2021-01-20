@@ -1,0 +1,5 @@
+[ballerina.observe]
+metricsEnabled=true
+metricsReporter="prometheus"
+
+[ballerinax.prometheus]
