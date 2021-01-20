@@ -62,14 +62,14 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
     @DataProvider(name = "test-prometheus-metrics-data")
     public Object[][] getTestPrometheusMetricsData() {
         return new Object[][]{
-                {"0.0.0.0:9797", "http://localhost:9797/metrics", 9797, "default"},
-                {"127.0.0.1:10097", "http://127.0.0.1:10097/metrics", 10097, "overridden"}
+                {"0.0.0.0:9797", "http://localhost:9797/metrics", 9797, "ConfigDefault.toml"},
+                {"127.0.0.1:10097", "http://127.0.0.1:10097/metrics", 10097, "ConfigOverridden.toml"}
         };
     }
 
     @Test(dataProvider = "test-prometheus-metrics-data")
     public void testPrometheusMetrics(String prometheusServiceBindAddress, String prometheusScrapeURL,
-                                      int prometheusPort, String configSubPath) throws Exception {
+                                      int prometheusPort, String configFilename) throws Exception {
         final Map<String, Pattern> expectedMetrics = new HashMap<>();
         expectedMetrics.put("requests_total_value{src_service_resource=\"true\"," +
                 "entrypoint_function_position=\"01_http_svc_test.bal:21:5\",listener_name=\"http\"," +
@@ -135,8 +135,7 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
         LogLeecher exceptionLogLeecher = new LogLeecher("Exception");
         serverInstance.addErrorLogLeecher(exceptionLogLeecher);
 
-        String configFile = Paths.get("src", "test", "resources", "configs", configSubPath).toFile()
-                .getAbsolutePath();
+        String configFile = Paths.get(RESOURCES_DIR.getAbsolutePath(), configFilename).toFile().getAbsolutePath();
         Map<String, String> env = new HashMap<>();
         env.put("BALCONFIGFILE", configFile);
 
