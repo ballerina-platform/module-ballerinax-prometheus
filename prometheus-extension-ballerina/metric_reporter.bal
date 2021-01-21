@@ -38,7 +38,7 @@ isolated function init() {
         if (err is error) {
             io:println("error: failed to start prometheus metrics reporter");
         } else {
-            io:println("ballerina: enabled prometheus metrics reporter");
+            io:println("ballerina: started Prometheus HTTP listener " + host + ":" + port.toString());
         }
     }
 }
