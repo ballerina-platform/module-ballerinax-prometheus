@@ -45,7 +45,7 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
     private static final Pattern PROMETHEUS_METRIC_VALUE_REGEX = Pattern.compile("[-+]?\\d*\\.?\\d+([eE][-+]?\\d+)?");
     private static final String TEST_RESOURCE_URL = "http://localhost:9091/test/sum";
 
-    private static final String PROMETHEUS_EXTENSION_LOG_PREFIX = "ballerina: enabled prometheus metrics reporter";
+    private static final String PROMETHEUS_EXTENSION_LOG_PREFIX = "ballerina: started Prometheus HTTP listener ";
     private static final String HTTP_SERVER_LOG_PREFIX = "[ballerina/http] started HTTP/WS listener ";
     private static final String SAMPLE_SERVER_LOG = HTTP_SERVER_LOG_PREFIX + "0.0.0.0:9091";
 
@@ -124,7 +124,8 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
                 "entrypoint_function_module=\"_anon/.:0.0.0\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
 
-        LogLeecher prometheusExtLogLeecher = new LogLeecher(PROMETHEUS_EXTENSION_LOG_PREFIX);
+        LogLeecher prometheusExtLogLeecher = new LogLeecher(PROMETHEUS_EXTENSION_LOG_PREFIX
+                + prometheusServiceBindAddress);
         serverInstance.addLogLeecher(prometheusExtLogLeecher);
         LogLeecher prometheusServerLogLeecher = new LogLeecher(HTTP_SERVER_LOG_PREFIX + prometheusServiceBindAddress);
         serverInstance.addLogLeecher(prometheusServerLogLeecher);
