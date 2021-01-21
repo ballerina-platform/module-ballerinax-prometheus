@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/io;
-import ballerina/config;
 import ballerina/http;
 import ballerina/lang.'string as str;
 import ballerina/observe;
@@ -23,17 +22,8 @@ import ballerina/regex;
 
 const REPORTER_NAME = "prometheus";
 
-const string OBSERVABILITY_METRICS_ENABLED_CONFIG = "b7a.observability.metrics.enabled";
-final boolean OBSERVABILITY_METRICS_ENABLED = config:getAsBoolean(OBSERVABILITY_METRICS_ENABLED_CONFIG, false);
-
-const string OBSERVABILITY_METRICS_REPORTER_NAME_CONFIG = "b7a.observability.metrics.reporter";
-final string OBSERVABILITY_METRICS_REPORTER_NAME = config:getAsString(OBSERVABILITY_METRICS_REPORTER_NAME_CONFIG, REPORTER_NAME);
-
-const string PROMETHEUS_PORT_CONFIG = "b7a.observability.metrics.prometheus.port";
-final int REPORTER_PORT = config:getAsInt(PROMETHEUS_PORT_CONFIG, 9797);
-
-const string PROMETHEUS_HOST_CONFIG = "b7a.observability.metrics.prometheus.host";
-final string REPORTER_HOST = config:getAsString(PROMETHEUS_HOST_CONFIG, "0.0.0.0");
+final configurable string host = "0.0.0.0";
+final configurable int port = 9797;
 
 const string METRIC_TYPE_GAUGE = "gauge";
 const string METRIC_TYPE_SUMMARY = "summary";
@@ -43,8 +33,8 @@ const string EXPIRY_TAG = "timeWindow";
 const string PERCENTILE_TAG = "quantile";
 
 isolated function init() {
-    if (OBSERVABILITY_METRICS_ENABLED && OBSERVABILITY_METRICS_REPORTER_NAME == REPORTER_NAME) {
-        error? err = startReporter(REPORTER_HOST, REPORTER_PORT);
+    if (observe:isMetricsEnabled() && observe:getMetricsReporter() == REPORTER_NAME) {
+        error? err = startReporter(host, port);
         if (err is error) {
             io:println("error: failed to start prometheus metrics reporter");
         } else {
