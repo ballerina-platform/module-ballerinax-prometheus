@@ -54,7 +54,7 @@
   "gnetId": 5841,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1611916325836,
+  "iteration": 1612249391547,
   "links": [],
   "panels": [
     {
@@ -96,7 +96,7 @@
       "links": [],
       "nullPointMode": "null as zero",
       "options": {
-        "alertThreshold": true
+        "alertThreshold": false
       },
       "percentage": false,
       "pluginVersion": "7.3.7",
@@ -581,7 +581,7 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "alertThreshold": false
       },
       "percentage": false,
       "pluginVersion": "7.3.7",
@@ -685,7 +685,7 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "alertThreshold": false
       },
       "percentage": false,
       "pluginVersion": "7.3.7",
@@ -790,7 +790,7 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "alertThreshold": false
       },
       "percentage": false,
       "pluginVersion": "7.3.7",
@@ -922,7 +922,7 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "alertThreshold": false
       },
       "percentage": false,
       "pluginVersion": "7.3.7",
@@ -1395,7 +1395,7 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "alertThreshold": false
       },
       "percentage": false,
       "pluginVersion": "7.3.7",
@@ -1496,7 +1496,7 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "alertThreshold": false
       },
       "percentage": false,
       "pluginVersion": "7.3.7",
@@ -1602,7 +1602,7 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "alertThreshold": false
       },
       "percentage": false,
       "pluginVersion": "7.3.7",
@@ -1734,7 +1734,7 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "alertThreshold": false
       },
       "percentage": false,
       "pluginVersion": "7.3.7",
@@ -2207,7 +2207,7 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "alertThreshold": false
       },
       "percentage": false,
       "pluginVersion": "7.3.7",
@@ -2308,7 +2308,7 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "alertThreshold": false
       },
       "percentage": false,
       "pluginVersion": "7.3.7",
@@ -2408,7 +2408,7 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "alertThreshold": false
       },
       "percentage": false,
       "pluginVersion": "7.3.7",
@@ -2509,7 +2509,7 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "alertThreshold": false
       },
       "percentage": false,
       "pluginVersion": "7.3.7",
