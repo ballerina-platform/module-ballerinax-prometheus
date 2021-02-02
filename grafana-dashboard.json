@@ -1,8 +1,8 @@
 {
   "__inputs": [
     {
-      "name": "DS_PROMETHEUSDS",
-      "label": "PrometheusDS",
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
       "description": "",
       "type": "datasource",
       "pluginId": "prometheus",
@@ -14,25 +14,25 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "5.0.4"
+      "version": "7.3.7"
     },
     {
       "type": "panel",
       "id": "graph",
       "name": "Graph",
-      "version": "5.0.0"
+      "version": ""
     },
     {
       "type": "datasource",
       "id": "prometheus",
       "name": "Prometheus",
-      "version": "5.0.0"
+      "version": "1.0.0"
     },
     {
       "type": "panel",
       "id": "singlestat",
       "name": "Singlestat",
-      "version": "5.0.0"
+      "version": ""
     }
   ],
   "annotations": {
@@ -49,11 +49,12 @@
       }
     ]
   },
+  "description": "Monitor Ballerina HTTP/HTTPs Services, HTTP Clients and SQL Clients",
   "editable": true,
   "gnetId": 5841,
   "graphTooltip": 0,
-  "id": 1,
-  "iteration": 1602141882733,
+  "id": null,
+  "iteration": 1612249391547,
   "links": [],
   "panels": [
     {
@@ -61,7 +62,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "decimals": 0,
       "fieldConfig": {
         "defaults": {
@@ -94,8 +95,11 @@
       "linewidth": 5,
       "links": [],
       "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": false
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.3.7",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -167,7 +171,7 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -189,7 +193,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -247,7 +251,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "\nsum(max_over_time(requests_total_value{instance=~\"$instance\",protocol=~\"$protocol\",http_method=~\"$http_method\",http_url=~\"$http_url\",service=~\"$service\",resource=~\"$resource\",connector_name=\"http\"}[1m])-min_over_time(requests_total_value{instance=~\"$instance\",protocol=~\"$protocol\",http_method=~\"$http_method\",http_url=~\"$http_url\",service=~\"$service\",resource=~\"$resource\",connector_name=\"http\"}[1m]))",
+          "expr": "sum(max_over_time(requests_total_value{instance=~\"$instance\",protocol=~\"$protocol\",http_method=~\"$http_method\",http_url=~\"$http_url\",entrypoint_function_module=~\"$entrypoint_function_module\",entrypoint_function_position=~\"$entrypoint_function_position\",src_object_name=~\"$src_object_name\"}[1m])-min_over_time(requests_total_value{instance=~\"$instance\",protocol=~\"$protocol\",http_method=~\"$http_method\",http_url=~\"$http_url\",entrypoint_function_module=~\"$entrypoint_function_module\",entrypoint_function_position=~\"$entrypoint_function_position\",src_object_name=~\"$src_object_name\"}[1m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -278,7 +282,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -336,9 +340,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "((sum(max_over_time(requests_total_value{instance=~\"$instance\",connector_name=\"ballerina/http/Caller\",http_status_code_group=\"4xx\"}[1m])-min_over_time(requests_total_value{instance=~\"$instance\",connector_name=\"ballerina/http/Caller\",http_status_code_group=\"4xx\"}[1m]))) OR vector(0))+((sum(max_over_time(requests_total_value{instance=~\"$instance\",connector_name=\"ballerina/http/Caller\",http_status_code_group=\"5xx\"}[1m])-min_over_time(requests_total_value{instance=~\"$instance\",connector_name=\"ballerina/http/Caller\",http_status_code_group=\"5xx\"}[1m]))) OR on() vector(0))",
+          "expr": "((sum(max_over_time(requests_total_value{instance=~\"$instance\",src_object_name=\"ballerina/http/Caller\",http_status_code_group=\"4xx\"}[1m])-min_over_time(requests_total_value{instance=~\"$instance\",src_object_name=\"ballerina/http/Caller\",http_status_code_group=\"4xx\"}[1m]))) OR vector(0))+((sum(max_over_time(requests_total_value{instance=~\"$instance\",src_object_name=\"ballerina/http/Caller\",http_status_code_group=\"5xx\"}[1m])-min_over_time(requests_total_value{instance=~\"$instance\",src_object_name=\"ballerina/http/Caller\",http_status_code_group=\"5xx\"}[1m]))) OR vector(0))",
           "format": "time_series",
           "hide": false,
+          "instant": false,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -367,7 +372,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "decimals": null,
       "fieldConfig": {
         "defaults": {
@@ -426,7 +431,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(inprogress_requests_value{instance=~\"$instance\",service=~\"$service\",resource=~\"$resource\",connector_name=\"http\"})",
+          "expr": "sum(inprogress_requests_value{instance=~\"$instance\",entrypoint_function_module=~\"$entrypoint_function_module\",entrypoint_function_position=~\"$entrypoint_function_position\",src_object_name=~\"$src_object_name\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -456,7 +461,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -514,7 +519,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "((sum(max_over_time(requests_total_value{instance=~\"$instance\",connector_name=\"ballerina/http/Caller\",http_status_code_group=\"4xx\"}[1m])\n-\n  min_over_time(requests_total_value{instance=~\"$instance\",connector_name=\"ballerina/http/Caller\",http_status_code_group=\"4xx\"}[1m])) OR vector(0))\n+\n(sum(max_over_time(requests_total_value{instance=~\"$instance\",connector_name=\"ballerina/http/Caller\",http_status_code_group=\"5xx\"}[1m]) \n-    min_over_time(requests_total_value{instance=~\"$instance\",connector_name=\"ballerina/http/Caller\",http_status_code_group=\"5xx\"}[1m])) OR vector(0)))\n*100\n/\nsum(max_over_time(requests_total_value{instance=~\"$instance\",connector_name=\"ballerina/http/Caller\"}[1m]) - min_over_time(requests_total_value{instance=~\"$instance\",connector_name=\"ballerina/http/Caller\"}[1m]))\n",
+          "expr": "((sum(max_over_time(requests_total_value{instance=~\"$instance\",src_object_name=\"ballerina/http/Caller\",http_status_code_group=\"4xx\"}[1m])\n-\n  min_over_time(requests_total_value{instance=~\"$instance\",src_object_name=\"ballerina/http/Caller\",http_status_code_group=\"4xx\"}[1m])) OR vector(0))\n+\n(sum(max_over_time(requests_total_value{instance=~\"$instance\",src_object_name=\"ballerina/http/Caller\",http_status_code_group=\"5xx\"}[1m]) \n-    min_over_time(requests_total_value{instance=~\"$instance\",src_object_name=\"ballerina/http/Caller\",http_status_code_group=\"5xx\"}[1m])) OR vector(0)))\n*100\n/\nsum(max_over_time(requests_total_value{instance=~\"$instance\",src_object_name=\"ballerina/http/Caller\"}[1m]) - min_over_time(requests_total_value{instance=~\"$instance\",src_object_name=\"ballerina/http/Caller\"}[1m]))\n",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -542,7 +547,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -575,8 +580,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": false
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.3.7",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -586,7 +594,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum without (http_status_code_group)(rate(requests_total_value{instance=~\"$instance\",protocol=~\"$protocol\",http_method=~\"$http_method\",http_url=~\"$http_url\",service=~\"$service\",resource=~\"$resource\",connector_name=\"http\"}[1m]))",
+          "expr": "sum without (http_status_code_group)(rate(requests_total_value{instance=~\"$instance\",entrypoint_function_module=~\"$entrypoint_function_module\",entrypoint_function_position=~\"$entrypoint_function_position\",src_object_name=\"ballerina/http/Caller\"}[1m]))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -643,7 +651,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -676,8 +684,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": false
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.3.7",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -687,7 +698,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "response_time_seconds{instance=~\"$instance\",protocol=~\"$protocol\",http_method=~\"$http_method\",http_url=~\"$http_url\",service=~\"$service\",resource=~\"$resource\",connector_name=\"http\"}",
+          "expr": "response_time_seconds{instance=~\"$instance\",protocol=~\"$protocol\",http_method=~\"$http_method\",http_url=~\"$http_url\",entrypoint_function_module=~\"$entrypoint_function_module\",entrypoint_function_position=~\"$entrypoint_function_position\"}",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -748,7 +759,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -778,8 +789,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": false
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.3.7",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -789,7 +803,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(requests_total_value{instance=~\"$instance\", action=~\"respond\",connector_name=\"ballerina/http/Caller\",http_status_code_group=\"1xx\"}[1m])",
+          "expr": "rate(requests_total_value{instance=~\"$instance\", src_function_name=\"respond\",src_object_name=\"ballerina/http/Caller\",http_status_code_group=\"1xx\"}[1m])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -797,7 +811,7 @@
           "refId": "A"
         },
         {
-          "expr": "rate(requests_total_value{instance=~\"$instance\", action=~\"respond\",connector_name=\"ballerina/http/Caller\",http_status_code_group=\"2xx\"}[1m])",
+          "expr": "rate(requests_total_value{instance=~\"$instance\", src_function_name=\"respond\",src_object_name=\"ballerina/http/Caller\",http_status_code_group=\"2xx\"}[1m])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -805,7 +819,7 @@
           "refId": "B"
         },
         {
-          "expr": "rate(requests_total_value{instance=~\"$instance\", action=~\"respond\",connector_name=\"ballerina/http/Caller\",http_status_code_group=\"3xx\"}[1m])",
+          "expr": "rate(requests_total_value{instance=~\"$instance\", src_function_name=\"respond\",src_object_name=\"ballerina/http/Caller\",http_status_code_group=\"3xx\"}[1m])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -813,7 +827,7 @@
           "refId": "C"
         },
         {
-          "expr": "rate(requests_total_value{instance=~\"$instance\", action=~\"respond\",connector_name=\"ballerina/http/Caller\",http_status_code_group=\"4xx\"}[1m])",
+          "expr": "rate(requests_total_value{instance=~\"$instance\", src_function_name=\"respond\",src_object_name=\"ballerina/http/Caller\",http_status_code_group=\"4xx\"}[1m])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -821,7 +835,7 @@
           "refId": "D"
         },
         {
-          "expr": "rate(requests_total_value{instance=~\"$instance\", action=~\"respond\",connector_name=\"ballerina/http/Caller\",http_status_code_group=\"5xx\"}[1m])",
+          "expr": "rate(requests_total_value{instance=~\"$instance\", src_function_name=\"respond\",src_object_name=\"ballerina/http/Caller\",http_status_code_group=\"5xx\"}[1m])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -875,7 +889,7 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -907,8 +921,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": false
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.3.7",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -918,7 +935,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(5,requests_total_value{connector_name=\"http\"})",
+          "expr": "topk(5,requests_total_value{src_service_resource=\"true\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -971,7 +988,7 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -992,7 +1009,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -1050,7 +1067,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum( max_over_time(requests_total_value{connector_name=\"ballerina/http/HttpClient\",instance=~\"$instance\", peer_address=~\"$peer_address\", action=~\"$http_client_action\"}[1m]) - min_over_time(requests_total_value{connector_name=\"ballerina/http/HttpClient\",instance=~\"$instance\", peer_address=~\"$peer_address\", action=~\"$http_client_action\"}[1m]) ) ",
+          "expr": "sum( max_over_time(requests_total_value{src_object_name=\"ballerina/http/HttpClient\",instance=~\"$instance\", peer_address=~\"$peer_address\",src_function_name=~\"$src_function_name\"}[1m]) - min_over_time(requests_total_value{src_object_name=\"ballerina/http/HttpClient\",instance=~\"$instance\", peer_address=~\"$peer_address\",src_function_name=~\"$src_function_name\"}[1m]) )",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1081,7 +1098,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -1139,7 +1156,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "((sum( max_over_time(requests_total_value{ instance=~\"$instance\", action=~\"$http_client_action\",http_status_code_group=\"4xx\",connector_name=\"ballerina/http/HttpClient\"}[1m]) - min_over_time(requests_total_value{ instance=~\"$instance\", action=~\"$http_client_action\",http_status_code_group=\"4xx\",connector_name=\"ballerina/http/HttpClient\"}[1m]))) OR vector(0)) + ((sum(max_over_time(requests_total_value{ instance=~\"$instance\", action=~\"$http_client_action\",http_status_code_group=\"5xx\",connector_name=\"ballerina/http/HttpClient\"}[1m]) - min_over_time(requests_total_value{instance=~\"$instance\", action=~\"$http_client_action\",http_status_code_group=\"5xx\",connector_name=\"ballerina/http/HttpClient\"}[1m]))) OR vector(0))",
+          "expr": "((sum( max_over_time(requests_total_value{ instance=~\"$instance\", src_function_name=~\"$src_function_name\",http_status_code_group=\"4xx\",src_object_name=\"ballerina/http/HttpClient\"}[1m]) - min_over_time(requests_total_value{ instance=~\"$instance\", src_function_name=~\"$src_function_name\",http_status_code_group=\"4xx\",src_object_name=\"ballerina/http/HttpClient\"}[1m]))) OR vector(0)) + ((sum(max_over_time(requests_total_value{ instance=~\"$instance\", src_function_name=~\"$src_function_name\",http_status_code_group=\"5xx\",src_object_name=\"ballerina/http/HttpClient\"}[1m]) - min_over_time(requests_total_value{instance=~\"$instance\", src_function_name=~\"$src_function_name\",http_status_code_group=\"5xx\",src_object_name=\"ballerina/http/HttpClient\"}[1m]))) OR vector(0))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1170,7 +1187,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "decimals": null,
       "fieldConfig": {
         "defaults": {
@@ -1229,7 +1246,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(inprogress_requests_value{connector_name=\"ballerina/http/HttpClient\",instance=~\"$instance\"})",
+          "expr": "sum(inprogress_requests_value{src_object_name=\"ballerina/http/HttpClient\",instance=~\"$instance\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1259,7 +1276,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -1317,7 +1334,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "((sum( max_over_time({__name__=~\"requests_total_value\", instance=~\"$instance\", action=~\"$http_client_action\",connector_name=\"ballerina/http/HttpClient\",http_status_code_group=\"4xx\"}[1m]) - min_over_time({__name__=~\"requests_total_value\", instance=~\"$instance\", action=~\"$http_client_action\",connector_name=\"ballerina/http/HttpClient\",http_status_code_group=\"4xx\"}[1m])) OR vector(0)) + ((sum(max_over_time({__name__=~\"requests_total_value\", instance=~\"$instance\", action=~\"$http_client_action\",connector_name=\"ballerina/http/HttpClient\",http_status_code_group=\"5xx\"}[1m]) - min_over_time({__name__=~\"requests_total_value\", instance=~\"$instance\", action=~\"$http_client_action\",connector_name=\"ballerina/http/HttpClient\",http_status_code_group=\"5xx\"}[1m])) OR  vector(0) )))*100 / sum( max_over_time({__name__=~\"requests_total_value\", instance=~\"$instance\", action=~\"$http_client_action\",connector_name=\"ballerina/http/HttpClient\"}[1m]) - min_over_time({__name__=~\"requests_total_value\", instance=~\"$instance\", action=~\"$http_client_action\",connector_name=\"ballerina/http/HttpClient\"}[1m]))\n",
+          "expr": "((sum( max_over_time({__name__=~\"requests_total_value\", instance=~\"$instance\", src_function_name=~\"$src_function_name\",src_object_name=\"ballerina/http/HttpClient\",http_status_code_group=\"4xx\"}[1m]) - min_over_time({__name__=~\"requests_total_value\", instance=~\"$instance\", src_function_name=~\"$src_function_name\",src_object_name=\"ballerina/http/HttpClient\",http_status_code_group=\"4xx\"}[1m])) OR vector(0)) + ((sum(max_over_time({__name__=~\"requests_total_value\", instance=~\"$instance\", src_function_name=~\"$src_function_name\",src_object_name=\"ballerina/http/HttpClient\",http_status_code_group=\"5xx\"}[1m]) - min_over_time({__name__=~\"requests_total_value\", instance=~\"$instance\", src_function_name=~\"$src_function_name\",src_object_name=\"ballerina/http/HttpClient\",http_status_code_group=\"5xx\"}[1m])) OR  vector(0) )))*100 / sum( max_over_time({__name__=~\"requests_total_value\", instance=~\"$instance\", src_function_name=~\"$src_function_name\",src_object_name=\"ballerina/http/HttpClient\"}[1m]) - min_over_time({__name__=~\"requests_total_value\", instance=~\"$instance\", src_function_name=~\"$src_function_name\",src_object_name=\"ballerina/http/HttpClient\"}[1m]))\n",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -1345,7 +1362,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1377,8 +1394,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": false
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.3.7",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1388,7 +1408,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum without (http_status_code_group) (rate(requests_total_value{instance=~\"$instance\",action=~\"$http_client_action\",http_method=~\"$http_method\",http_url=~\"$http_url\",peer_address=~\"$peer_address\",connector_name=\"ballerina/http/HttpClient\"}[1m]))",
+          "expr": "sum without (http_status_code_group) (rate(requests_total_value{instance=~\"$instance\",src_function_name=~\"$src_function_name\",http_method=~\"$http_method\",http_url=~\"$http_url\",peer_address=~\"$peer_address\",src_object_name=\"ballerina/http/HttpClient\"}[1m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1443,7 +1463,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1475,8 +1495,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": false
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.3.7",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1486,7 +1509,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum without(http_status_code_group) ({__name__=~\"response_time_seconds_value\", instance=~\"$instance\",action=~\"$http_client_action\",http_method=~\"$http_method\",http_url=~\"$http_url\",connector_name=\"ballerina/http/HttpClient\"})",
+          "expr": "sum without(http_status_code_group) ({__name__=~\"response_time_seconds_value\", instance=~\"$instance\",src_function_name=~\"$src_function_name\",http_method=~\"$http_method\",http_url=~\"$http_url\"})",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1548,7 +1571,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -1578,8 +1601,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": false
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.3.7",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1589,7 +1615,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate({__name__=~\"requests_total_value\", instance=~\"$instance\", action=~\"$http_client_action\",connector_name=\"ballerina/http/HttpClient\",http_status_code_group=\"1xx\"}[1m])",
+          "expr": "rate({__name__=~\"requests_total_value\", instance=~\"$instance\", src_function_name=~\"$src_function_name\",src_object_name=\"ballerina/http/HttpClient\",http_status_code_group=\"1xx\"}[1m])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1597,7 +1623,7 @@
           "refId": "A"
         },
         {
-          "expr": "rate({__name__=~\"requests_total_value\", instance=~\"$instance\", action=~\"$http_client_action\",connector_name=\"ballerina/http/HttpClient\",http_status_code_group=\"2xx\"}[1m])",
+          "expr": "rate({__name__=~\"requests_total_value\", instance=~\"$instance\", src_function_name=~\"$src_function_name\",src_object_name=\"ballerina/http/HttpClient\",http_status_code_group=\"2xx\"}[1m])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1605,7 +1631,7 @@
           "refId": "B"
         },
         {
-          "expr": "rate({__name__=~\"requests_total_value\", instance=~\"$instance\", action=~\"$http_client_action\",connector_name=\"ballerina/http/HttpClient\",http_status_code_group=\"3xx\"}[1m])",
+          "expr": "rate({__name__=~\"requests_total_value\", instance=~\"$instance\", src_function_name=~\"$src_function_name\",src_object_name=\"ballerina/http/HttpClient\",http_status_code_group=\"3xx\"}[1m])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1613,7 +1639,7 @@
           "refId": "C"
         },
         {
-          "expr": "rate({__name__=~\"requests_total_value\", instance=~\"$instance\", action=~\"$http_client_action\",connector_name=\"ballerina/http/HttpClient\",http_status_code_group=\"4xx\"}[1m])",
+          "expr": "rate({__name__=~\"requests_total_value\", instance=~\"$instance\", src_function_name=~\"$src_function_name\",src_object_name=\"ballerina/http/HttpClient\",http_status_code_group=\"4xx\"}[1m])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1621,7 +1647,7 @@
           "refId": "D"
         },
         {
-          "expr": "rate({__name__=~\"requests_total_value\", instance=~\"$instance\", action=~\"$http_client_action\",connector_name=\"ballerina/http/HttpClient\",http_status_code_group=\"5xx\"}[1m])",
+          "expr": "rate({__name__=~\"requests_total_value\", instance=~\"$instance\", src_function_name=~\"$src_function_name\",src_object_name=\"ballerina/http/HttpClient\",http_status_code_group=\"5xx\"}[1m])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1675,7 +1701,7 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -1707,8 +1733,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": false
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.3.7",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1718,7 +1747,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(5,requests_total_value{connector_name=\"ballerina/http/HttpClient\"})",
+          "expr": "topk(5,requests_total_value{src_object_name=\"ballerina/http/HttpClient\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1771,7 +1800,7 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1792,7 +1821,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -1850,7 +1879,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(max_over_time(requests_total_value{instance=~\"$instance\",action=~\"$db_action\",connector_name=\"ballerina/java_jdbc/Client\"}[1m])-min_over_time(requests_total_value{instance=~\"$instance\",action=~\"$db_action\",connector_name=\"ballerina/java_jdbc/Client\"}[1m]))",
+          "expr": "sum(max_over_time(requests_total_value{instance=~\"$instance\",src_function_name=~\"$db_action\",src_object_name=\"ballerinax/mysql/Client\"}[1m])-min_over_time(requests_total_value{instance=~\"$instance\",src_function_name=~\"$db_action\",src_object_name=\"ballerinax/mysql/Client\"}[1m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1881,7 +1910,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -1939,7 +1968,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum (max_over_time(requests_total_value{instance=~\"$instance\",action=~\"$db_action\",connector_name=\"ballerina/java_jdbc/Client\",error=\"true\"}[1m]) - min_over_time(requests_total_value{instance=~\"$instance\",action=~\"$db_action\",connector_name=\"ballerina/java_jdbc/Client\",error=\"true\"}[1m])) OR  vector(0)",
+          "expr": "sum (max_over_time(requests_total_value{instance=~\"$instance\",src_function_name=~\"$db_action\",src_object_name=\"ballerinax/mysql/Client\",error=\"true\"}[1m]) - min_over_time(requests_total_value{instance=~\"$instance\",src_function_name=~\"$db_action\",src_object_name=\"ballerinax/mysql/Client\",error=\"true\"}[1m])) OR  vector(0)",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1970,7 +1999,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "decimals": null,
       "fieldConfig": {
         "defaults": {
@@ -2029,7 +2058,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(inprogress_requests_value{action=~\"$db_action\",connector_name=\"ballerina/java_jdbc/Client\"})",
+          "expr": "sum(inprogress_requests_value{src_function_name=~\"$db_action\",src_object_name=\"ballerinax/mysql/Client\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -2059,7 +2088,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -2117,7 +2146,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum (max_over_time(requests_total_value{instance=~\"$instance\",action=~\"$db_action\",connector_name=\"ballerina/java_jdbc/Client\",error=\"true\"}[1m]) - min_over_time(requests_total_value{instance=~\"$instance\",action=~\"$db_action\",connector_name=\"ballerina/java_jdbc/Client\",error=\"true\"}[1m]))*100/sum(max_over_time(requests_total_value{instance=~\"$instance\",action=~\"$db_action\",connector_name=\"ballerina/java_jdbc/Client\"}[1m]) - min_over_time(requests_total_value{instance=~\"$instance\",action=~\"$db_action\",connector_name=\"ballerina/java_jdbc/Client\"}[1m]))",
+          "expr": "sum (max_over_time(requests_total_value{instance=~\"$instance\",src_function_name=~\"$db_action\",src_object_name=\"ballerinax/mysql/Client\",error=\"true\"}[1m]) - min_over_time(requests_total_value{instance=~\"$instance\",src_function_name=~\"$db_action\",src_object_name=\"ballerinax/mysql/Client\",error=\"true\"}[1m]))*100/sum(max_over_time(requests_total_value{instance=~\"$instance\",src_function_name=~\"$db_action\",src_object_name=\"ballerinax/mysql/Client\"}[1m]) - min_over_time(requests_total_value{instance=~\"$instance\",src_function_name=~\"$db_action\",src_object_name=\"ballerinax/mysql/Client\"}[1m]))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -2145,7 +2174,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -2177,8 +2206,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": false
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.3.7",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2188,7 +2220,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(requests_total_value{instance=~\"$instance\",action=~\"$db_action\",connector_name=\"ballerina/java_jdbc/Client\"}[1m])",
+          "expr": "rate(requests_total_value{instance=~\"$instance\",src_function_name=~\"$db_action\",src_object_name=\"ballerinax/mysql/Client\"}[1m])",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2243,7 +2275,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -2275,8 +2307,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": false
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.3.7",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2286,7 +2321,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "response_time_seconds{instance=~\"$instance\",action=~\"$db_action\",connector_name=\"ballerina/java_jdbc/Client\"}",
+          "expr": "response_time_seconds{instance=~\"$instance\",src_function_name=~\"$db_action\",src_object_name=\"ballerinax/mysql/Client\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -2340,7 +2375,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -2372,8 +2407,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": false
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.3.7",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2383,7 +2421,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(requests_total_value{instance=~\"$instance\",action=~\"$db_action\",connector_name=\"ballerina/java_jdbc/Client\",error=\"true\"}[1m])",
+          "expr": "rate(requests_total_value{instance=~\"$instance\",src_function_name=~\"$db_action\",src_object_name=\"ballerinax/mysql/Client\",error=\"true\"}[1m])",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2438,7 +2476,7 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUSDS}",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -2470,8 +2508,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": false
+      },
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.3.7",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2481,7 +2522,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(5,requests_total_value{connector_name=\"ballerina/java_jdbc/Client\"})",
+          "expr": "topk(5,requests_total_value{src_object_name=\"ballerinax/mysql/Client\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -2533,7 +2574,7 @@
       }
     }
   ],
-  "refresh": "5s",
+  "refresh": "30s",
   "schemaVersion": 26,
   "style": "dark",
   "tags": [
@@ -2546,15 +2587,16 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUSDS}",
-        "definition": "label_values(requests_total_value,instance)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(requests_total_value, instance)",
+        "error": null,
         "hide": 0,
         "includeAll": true,
         "label": "instance",
         "multi": true,
         "name": "instance",
         "options": [],
-        "query": "label_values(requests_total_value,instance)",
+        "query": "label_values(requests_total_value, instance)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2568,15 +2610,16 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUSDS}",
-        "definition": "label_values(requests_total_value,service)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(requests_total_value, entrypoint_function_module)",
+        "error": null,
         "hide": 0,
         "includeAll": true,
-        "label": "service",
+        "label": "entrypoint-function-module",
         "multi": true,
-        "name": "service",
+        "name": "entrypoint_function_module",
         "options": [],
-        "query": "label_values(requests_total_value,service)",
+        "query": "label_values(requests_total_value, entrypoint_function_module)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2590,15 +2633,16 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUSDS}",
-        "definition": "label_values(requests_total_value,resource)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(requests_total_value, entrypoint_function_position)",
+        "error": null,
         "hide": 0,
         "includeAll": true,
-        "label": "resource",
+        "label": "entrypoint-function-position",
         "multi": true,
-        "name": "resource",
+        "name": "entrypoint_function_position",
         "options": [],
-        "query": "label_values(requests_total_value,resource)",
+        "query": "label_values(requests_total_value, entrypoint_function_position)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2612,15 +2656,16 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUSDS}",
-        "definition": "label_values(requests_total_value,protocol)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(requests_total_value, protocol)",
+        "error": null,
         "hide": 0,
         "includeAll": true,
         "label": "protocol",
         "multi": true,
         "name": "protocol",
         "options": [],
-        "query": "label_values(requests_total_value,protocol)",
+        "query": "label_values(requests_total_value, protocol)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2634,15 +2679,16 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUSDS}",
-        "definition": "label_values(requests_total_value,http_method)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(requests_total_value, http_method)",
+        "error": null,
         "hide": 0,
         "includeAll": true,
         "label": "http-method",
         "multi": true,
         "name": "http_method",
         "options": [],
-        "query": "label_values(requests_total_value,http_method)",
+        "query": "label_values(requests_total_value, http_method)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2656,15 +2702,16 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUSDS}",
-        "definition": "label_values(requests_total_value,http_url)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(requests_total_value, http_url)",
+        "error": null,
         "hide": 0,
         "includeAll": true,
         "label": "http-url",
         "multi": true,
         "name": "http_url",
         "options": [],
-        "query": "label_values(requests_total_value,http_url)",
+        "query": "label_values(requests_total_value, http_url)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2678,15 +2725,16 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUSDS}",
-        "definition": "label_values(requests_total_value,action)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(requests_total_value, src_object_name)",
+        "error": null,
         "hide": 0,
         "includeAll": true,
-        "label": "http-client-action",
+        "label": "src-object-name",
         "multi": true,
-        "name": "http_client_action",
+        "name": "src_object_name",
         "options": [],
-        "query": "label_values(requests_total_value,action)",
+        "query": "label_values(requests_total_value, src_object_name)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2700,15 +2748,39 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUSDS}",
-        "definition": "label_values(requests_total_value{connector_name=\"ballerina/java_jdbc/Client\"},action)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(requests_total_value, src_function_name)",
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "src-function-name",
+        "multi": true,
+        "name": "src_function_name",
+        "options": [],
+        "query": "label_values(requests_total_value, src_function_name)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(requests_total_value{src_object_name=\"ballerinax/mysql/Client\"}, src_function_name)",
+        "error": null,
         "hide": 0,
         "includeAll": true,
         "label": "db-action",
         "multi": true,
         "name": "db_action",
         "options": [],
-        "query": "label_values(requests_total_value{connector_name=\"ballerina/java_jdbc/Client\"},action)",
+        "query": "label_values(requests_total_value{src_object_name=\"ballerinax/mysql/Client\"}, src_function_name)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2722,37 +2794,16 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUSDS}",
-        "definition": "label_values(requests_total_value,connector_name)",
-        "hide": 0,
-        "includeAll": true,
-        "label": "connector-name",
-        "multi": true,
-        "name": "connector_name",
-        "options": [],
-        "query": "label_values(requests_total_value,connector_name)",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUSDS}",
-        "definition": "label_values(requests_total_value,http_status_code_group)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(requests_total_value, http_status_code_group)",
+        "error": null,
         "hide": 0,
         "includeAll": true,
         "label": "http-status-code-group",
         "multi": true,
         "name": "http_status_code_group",
         "options": [],
-        "query": "label_values(requests_total_value,http_status_code_group)",
+        "query": "label_values(requests_total_value, http_status_code_group)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2766,8 +2817,9 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUSDS}",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(peer_address)",
+        "error": null,
         "hide": 0,
         "includeAll": true,
         "label": "peer-address",
@@ -2819,6 +2871,5 @@
   "timezone": "",
   "title": "Ballerina Metrics",
   "uid": "8FPN-nmik",
-  "version": 3,
-  "description": "Monitor Ballerina HTTP/HTTPs Services, HTTP Clients and SQL Clients"
+  "version": 2
 }
