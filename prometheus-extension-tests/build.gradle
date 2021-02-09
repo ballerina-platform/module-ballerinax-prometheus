@@ -77,8 +77,8 @@ def copyDistributions (distributionConfigurations) {
         /* Standard Libraries */
         distributionConfigurations.resolvedConfiguration.resolvedArtifacts.each { artifact ->
             def artifactExtractedPath = "${project.buildDir}/extracted-distributions/" + artifact.name + "-zip"
-            into("repo/balo") {
-                from "${artifactExtractedPath}/balo"
+            into("repo/bala") {
+                from "${artifactExtractedPath}/bala"
             }
             into("repo/cache") {
                 from "${artifactExtractedPath}/cache"
