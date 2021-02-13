@@ -89,6 +89,7 @@ def ballerinaDependencyFile = new File("$project.projectDir/Dependencies.toml")
 def artifactBallerinaDocs = file("${project.projectDir}/build/docs_parent/")
 def artifactCacheParent = file("${project.buildDir}/cache_parent/")
 def artifactLibParent = file("${project.buildDir}/lib_parent/")
+def snapshotVersion = "-SNAPSHOT"
 def tomlVersion = project.version.split("-")[0]
 def ballerinaCentralAccessToken = System.getenv('BALLERINA_CENTRAL_ACCESS_TOKEN')
 def originalConfig = ballerinaConfigFile.text
@@ -96,9 +97,9 @@ def originalDependencyConfig = ballerinaDependencyFile.text
 
 task updateTomlVerions {
     doLast {
-        def stdlibDependentIoVersion = project.stdlibIoVersion.split("-")[0]
-        def stdlibDependentRegexVersion = project.stdlibRegexVersion.split("-")[0]
-        def stdlibDependentHttpVersion = project.stdlibHttpVersion.split("-")[0]
+        def stdlibDependentIoVersion = project.stdlibIoVersion.replace("${snapshotVersion}", "")
+        def stdlibDependentRegexVersion = project.stdlibRegexVersion.replace("${snapshotVersion}", "")
+        def stdlibDependentHttpVersion = project.stdlibHttpVersion.replace("${snapshotVersion}", "")
 
         def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
         newConfig = newConfig.replace("@toml.version@", tomlVersion)
