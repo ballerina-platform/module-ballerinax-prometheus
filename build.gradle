@@ -19,6 +19,7 @@ plugins {
     id "com.github.spotbugs" version "4.5.1"
     id "net.researchgate.release" version "2.8.0"
     id "de.undercouch.download" version "4.0.4"
+    id 'jacoco'
 }
 
 allprojects {
@@ -271,6 +272,28 @@ release {
     }
 }
 
+task codeCoverageReport(type: JacocoReport) {
+    dependsOn('prometheus-extension-ballerina:extractBallerinaClassFiles')
+
+    executionData fileTree(project.rootDir.absolutePath).include("**/*.exec")
+
+    additionalClassDirs files("${buildDir}/classes")
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+        csv.enabled = true
+        xml.destination = new File("${buildDir}/reports/jacoco/report.xml")
+        html.destination = new File("${buildDir}/reports/jacoco/report.html")
+        csv.destination = new File("${buildDir}/reports/jacoco/report.csv")
+    }
+
+    onlyIf = {
+        true
+    }
+}
+
 task build {
     dependsOn('prometheus-extension-ballerina:build')
 }
+
