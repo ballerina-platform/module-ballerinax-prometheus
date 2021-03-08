@@ -95,6 +95,7 @@ def ballerinaCentralAccessToken = System.getenv('BALLERINA_CENTRAL_ACCESS_TOKEN'
 def originalConfig = ballerinaConfigFile.text
 def originalDependencyConfig = ballerinaDependencyFile.text
 def artifactJars = file("$project.projectDir/target/cache/${packageOrg}/${packageName}/${tomlVersion}/java11/")
+def platform = "any"
 
 task updateTomlVerions {
     doLast {
@@ -146,9 +147,12 @@ task ballerinaBuild {
                 commandLine 'sh', '-c', "${distributionBinPath}/bal build --offline --skip-tests ${additionalBuildParams} -c"
             }
         }
-        copy {
-            from file("${project.projectDir}/target/bala")
-            into file("$artifactCacheParent/bala/${packageOrg}/${packageName}/${tomlVersion}")
+        // extract bala file to artifact cache directory
+        file("${project.projectDir}/target/bala").eachFileMatch(~/.*.bala/) { balaFile ->
+            copy {
+                from zipTree(balaFile)
+                into file("$artifactCacheParent/bala/${packageOrg}/${packageName}/${tomlVersion}/${platform}")
+            }
         }
         copy {
             from file("${project.projectDir}/target/cache")
