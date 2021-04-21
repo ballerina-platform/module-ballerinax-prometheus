@@ -82,7 +82,8 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
         expectedMetrics.put("requests_total_value{src_object_name=\"ballerina/http/Caller\"," +
                 "src_module=\"_anon/.:0.0.0\",http_status_code_group=\"2xx\",src_client_remote=\"true\"," +
                 "src_position=\"01_http_svc_test.bal:27:20\",entrypoint_function_name=\"/sum\"," +
-                "src_function_name=\"respond\",entrypoint_function_module=\"_anon/.:0.0.0\",}",
+                "src_function_name=\"respond\",entrypoint_function_module=\"_anon/.:0.0.0\"," +
+                "entrypoint_service_name=\"/test\",entrypoint_resource_accessor=\"get\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
         expectedMetrics.put("inprogress_requests_value{listener_name=\"http\",src_module=\"_anon/.:0.0.0\"," +
                 "src_object_name=\"/test\",src_position=\"01_http_svc_test.bal:21:5\",protocol=\"http\"," +
@@ -94,7 +95,8 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
         expectedMetrics.put("inprogress_requests_value{src_object_name=\"ballerina/http/Caller\"," +
                 "src_module=\"_anon/.:0.0.0\",src_client_remote=\"true\"," +
                 "src_position=\"01_http_svc_test.bal:27:20\",entrypoint_function_name=\"/sum\"," +
-                "src_function_name=\"respond\",entrypoint_function_module=\"_anon/.:0.0.0\",}",
+                "src_function_name=\"respond\",entrypoint_function_module=\"_anon/.:0.0.0\"," +
+                "entrypoint_service_name=\"/test\",entrypoint_resource_accessor=\"get\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
         expectedMetrics.put("response_time_nanoseconds_total_value{listener_name=\"http\"," +
                 "src_module=\"_anon/.:0.0.0\",src_object_name=\"/test\"," +
@@ -107,7 +109,8 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
         expectedMetrics.put("response_time_nanoseconds_total_value{src_object_name=\"ballerina/http/Caller\"," +
                 "src_module=\"_anon/.:0.0.0\",http_status_code_group=\"2xx\",src_client_remote=\"true\"," +
                 "src_position=\"01_http_svc_test.bal:27:20\",entrypoint_function_name=\"/sum\"," +
-                "src_function_name=\"respond\",entrypoint_function_module=\"_anon/.:0.0.0\",}",
+                "src_function_name=\"respond\",entrypoint_function_module=\"_anon/.:0.0.0\"," +
+                "entrypoint_service_name=\"/test\",entrypoint_resource_accessor=\"get\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
         expectedMetrics.put("response_time_seconds_value{listener_name=\"http\",src_module=\"_anon/.:0.0.0\"," +
                 "src_object_name=\"/test\",src_position=\"01_http_svc_test.bal:21:5\",protocol=\"http\"," +
@@ -119,7 +122,8 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
         expectedMetrics.put("response_time_seconds_value{src_object_name=\"ballerina/http/Caller\"," +
                 "src_module=\"_anon/.:0.0.0\",http_status_code_group=\"2xx\",src_client_remote=\"true\"," +
                 "src_position=\"01_http_svc_test.bal:27:20\",entrypoint_function_name=\"/sum\"," +
-                "src_function_name=\"respond\",entrypoint_function_module=\"_anon/.:0.0.0\",}",
+                "src_function_name=\"respond\",entrypoint_function_module=\"_anon/.:0.0.0\"," +
+                "entrypoint_service_name=\"/test\",entrypoint_resource_accessor=\"get\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
 
         LogLeecher prometheusExtLogLeecher = new LogLeecher(PROMETHEUS_EXTENSION_LOG_PREFIX
