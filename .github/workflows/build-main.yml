@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+    name: Build Main Branch
     runs-on: ubuntu-latest
     if: github.repository_owner == 'ballerina-platform'
     steps:

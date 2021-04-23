@@ -6,6 +6,7 @@ on:
 
 jobs:
   ubuntu-build:
+    name: Daily Builds to verify on Ubuntu
     runs-on: ubuntu-latest
     if: github.repository_owner == 'ballerina-platform'
     steps:
@@ -23,6 +24,7 @@ jobs:
         run: ./gradlew clean build --stacktrace --scan --console=plain --no-daemon
 
   windows-build:
+    name: Daily Builds to verify on Windows
     runs-on: windows-latest
     if: github.repository_owner == 'ballerina-platform'
     steps:
