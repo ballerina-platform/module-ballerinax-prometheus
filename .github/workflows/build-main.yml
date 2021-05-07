@@ -25,7 +25,7 @@ jobs:
           packagePublishRepo: ${{ github.repository }}
         run: |
           ./gradlew clean build publish --stacktrace --scan --console=plain --no-daemon
-          ./gradlew codeCoverageReport
+          ./gradlew codeCoverageReport --console=plain --no-daemon
       - name: Generate Codecov Report
         uses: codecov/codecov-action@v1
       - name: Upload Artifacts
