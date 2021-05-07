@@ -10,7 +10,6 @@ on:
 
 jobs:
   ubuntu-build:
-    name: Build Development Branches on Ubuntu
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -28,7 +27,6 @@ jobs:
           ./gradlew clean build --stacktrace --scan --console=plain --no-daemon
 
   windows-build:
-    name: Build Development Branches on Windows
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
