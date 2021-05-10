@@ -19,9 +19,11 @@ jobs:
           packagePAT: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./gradlew clean build --stacktrace --scan --console=plain --no-daemon
-          ./gradlew codeCoverageReport
-      - name: Generate Codecov Report
+          ./gradlew codeCoverageReport --console=plain --no-daemon
+      - name: Upload Coverage Report
         uses: codecov/codecov-action@v1
+        with:
+          fail_ci_if_error: true
 
   windows-build:
     runs-on: windows-latest
