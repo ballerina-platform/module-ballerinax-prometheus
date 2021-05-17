@@ -22,8 +22,8 @@ import ballerina/regex;
 
 const REPORTER_NAME = "prometheus";
 
-final configurable string host = "0.0.0.0";
-final configurable int port = 9797;
+configurable string host = "0.0.0.0";
+configurable int port = 9797;
 
 const string METRIC_TYPE_GAUGE = "gauge";
 const string METRIC_TYPE_SUMMARY = "summary";
