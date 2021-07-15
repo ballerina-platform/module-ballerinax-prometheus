@@ -39,7 +39,7 @@ isolated function init() {
         if (err is error) {
             io:println("error: failed to start prometheus metrics reporter");
         } else {
-            io:println(string `ballerina: started Prometheus HTTP listener ${host} : ${port}`);
+            io:println(string `ballerina: started Prometheus HTTP listener ${host}:${port}`);
         }
     }
 }
@@ -63,7 +63,6 @@ isolated function startReporter(string host, int port) returns error? {
             resource function get metrics(http:Caller caller) {
                 observe:Metric?[] metrics = observe:getAllMetrics();
                 string[] payload = [];
-                // string payload = EMPTY_STRING;
                 foreach var m in metrics {
                     observe:Metric metric = <observe:Metric> m;
                     string qualifiedMetricName = getEscapedName(metric.name);
@@ -71,9 +70,6 @@ isolated function startReporter(string host, int port) returns error? {
                     payload.push(generateMetricHelp(metricReportName, metric.desc));
                     payload.push(generateMetricInfo(metricReportName, metric.metricType));
                     payload.push(generateMetric(metricReportName, metric.tags, metric.value));
-                    // payload += generateMetricHelp(metricReportName, metric.desc);
-                    // payload += generateMetricInfo(metricReportName, metric.metricType);
-                    // payload += generateMetric(metricReportName, metric.tags, metric.value);
                     if ((str:toLowerAscii(metric.metricType) == (METRIC_TYPE_GAUGE)) && metric.summary !== ()){
                         map<string> tags = metric.tags;
                         observe:Snapshot[]? summaries = metric.summary;
@@ -89,17 +85,9 @@ isolated function startReporter(string host, int port) returns error? {
                                 payload.push(generateMetric(getMetricName(qualifiedMetricName, "max"), tags, aSnapshot.max));
                                 payload.push(generateMetric(getMetricName(qualifiedMetricName, "min"), tags, aSnapshot.min));
                                 payload.push(generateMetric(getMetricName(qualifiedMetricName, "stdDev"), tags, aSnapshot.stdDev));
-                                // payload += generateMetricHelp(qualifiedMetricName, "A Summary of " +  qualifiedMetricName + " for window of "
-                                //                             + aSnapshot.timeWindow.toString());
-                                // payload += generateMetricInfo(qualifiedMetricName, METRIC_TYPE_SUMMARY);
-                                // payload += generateMetric(getMetricName(qualifiedMetricName, "mean"), tags, aSnapshot.mean);
-                                // payload += generateMetric(getMetricName(qualifiedMetricName, "max"), tags, aSnapshot.max);
-                                // payload += generateMetric(getMetricName(qualifiedMetricName, "min"), tags, aSnapshot.min);
-                                // payload += generateMetric(getMetricName(qualifiedMetricName, "stdDev"), tags, aSnapshot.stdDev);
                                 foreach var percentileValue in aSnapshot.percentileValues  {
                                     tags[PERCENTILE_TAG] = percentileValue.percentile.toString();
                                     payload.push(generateMetric(qualifiedMetricName, tags, percentileValue.value));
-                                    // payload += generateMetric(qualifiedMetricName, tags, percentileValue.value);
                                 }
                                 _ = tags.remove(EXPIRY_TAG);
                                 _ = tags.remove(PERCENTILE_TAG);
