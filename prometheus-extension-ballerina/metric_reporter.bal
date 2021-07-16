@@ -70,28 +70,24 @@ isolated function startReporter(string host, int port) returns error? {
                     payload.push(generateMetricHelp(metricReportName, metric.desc));
                     payload.push(generateMetricInfo(metricReportName, metric.metricType));
                     payload.push(generateMetric(metricReportName, metric.tags, metric.value));
-                    if ((str:toLowerAscii(metric.metricType) == (METRIC_TYPE_GAUGE)) && metric.summary !== ()){
+                    if ((str:toLowerAscii(metric.metricType) == METRIC_TYPE_GAUGE) && !(metric.summary is ())){
                         map<string> tags = metric.tags;
-                        observe:Snapshot[]? summaries = metric.summary;
-                        if (summaries is ()) {
-                            payload.push(NEW_LINE);
-                        } else {
-                            foreach var aSnapshot in summaries {
-                                tags[EXPIRY_TAG] = aSnapshot.timeWindow.toString();
-                                payload.push(generateMetricHelp(qualifiedMetricName, "A Summary of " +  qualifiedMetricName + " for window of "
-                                                            + aSnapshot.timeWindow.toString()));
-                                payload.push(generateMetricInfo(qualifiedMetricName, METRIC_TYPE_SUMMARY));
-                                payload.push(generateMetric(getMetricName(qualifiedMetricName, "mean"), tags, aSnapshot.mean));
-                                payload.push(generateMetric(getMetricName(qualifiedMetricName, "max"), tags, aSnapshot.max));
-                                payload.push(generateMetric(getMetricName(qualifiedMetricName, "min"), tags, aSnapshot.min));
-                                payload.push(generateMetric(getMetricName(qualifiedMetricName, "stdDev"), tags, aSnapshot.stdDev));
-                                foreach var percentileValue in aSnapshot.percentileValues  {
-                                    tags[PERCENTILE_TAG] = percentileValue.percentile.toString();
-                                    payload.push(generateMetric(qualifiedMetricName, tags, percentileValue.value));
-                                }
-                                _ = tags.remove(EXPIRY_TAG);
-                                _ = tags.remove(PERCENTILE_TAG);
+                        observe:Snapshot[] summaries = <observe:Snapshot[]> metric.summary;
+                        foreach var aSnapshot in summaries {
+                            tags[EXPIRY_TAG] = aSnapshot.timeWindow.toString();
+                            payload.push(generateMetricHelp(qualifiedMetricName, string `A Summary of ${
+                                                        qualifiedMetricName} for window of ${aSnapshot.timeWindow.toString()}`));
+                            payload.push(generateMetricInfo(qualifiedMetricName, METRIC_TYPE_SUMMARY));
+                            payload.push(generateMetric(getMetricName(qualifiedMetricName, "mean"), tags, aSnapshot.mean));
+                            payload.push(generateMetric(getMetricName(qualifiedMetricName, "max"), tags, aSnapshot.max));
+                            payload.push(generateMetric(getMetricName(qualifiedMetricName, "min"), tags, aSnapshot.min));
+                            payload.push(generateMetric(getMetricName(qualifiedMetricName, "stdDev"), tags, aSnapshot.stdDev));
+                            foreach var percentileValue in aSnapshot.percentileValues  {
+                                tags[PERCENTILE_TAG] = percentileValue.percentile.toString();
+                                payload.push(generateMetric(qualifiedMetricName, tags, percentileValue.value));
                             }
+                            _ = tags.remove(EXPIRY_TAG);
+                            _ = tags.remove(PERCENTILE_TAG);
                         }
                     }
                 }
