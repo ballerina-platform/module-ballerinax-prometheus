@@ -86,7 +86,6 @@ isolated function startReporter(string host, int port) returns error? {
                                 tags[PERCENTILE_TAG] = percentileValue.percentile.toString();
                                 payload.push(generateMetric(qualifiedMetricName, tags, percentileValue.value));
                             }
-                            _ = tags.remove(EXPIRY_TAG);
                             _ = tags.remove(PERCENTILE_TAG);
                         }
                     }
