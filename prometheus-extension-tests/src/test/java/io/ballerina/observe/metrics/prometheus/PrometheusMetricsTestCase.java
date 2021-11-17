@@ -47,8 +47,6 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
     private static final String TEST_RESOURCE_URL = "http://localhost:9091/test/sum";
 
     private static final String PROMETHEUS_EXTENSION_LOG_PREFIX = "ballerina: started Prometheus HTTP listener ";
-    private static final String HTTP_SERVER_LOG_PREFIX = "[ballerina/http] started HTTP/WS listener ";
-    private static final String SAMPLE_SERVER_LOG = HTTP_SERVER_LOG_PREFIX + "0.0.0.0:9091";
 
     @BeforeMethod
     public void setup() throws Exception {
@@ -129,10 +127,6 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
         LogLeecher prometheusExtLogLeecher = new LogLeecher(PROMETHEUS_EXTENSION_LOG_PREFIX
                 + prometheusServiceBindAddress);
         serverInstance.addLogLeecher(prometheusExtLogLeecher);
-        LogLeecher prometheusServerLogLeecher = new LogLeecher(HTTP_SERVER_LOG_PREFIX + prometheusServiceBindAddress);
-        serverInstance.addLogLeecher(prometheusServerLogLeecher);
-        LogLeecher sampleServerLogLeecher = new LogLeecher(SAMPLE_SERVER_LOG);
-        serverInstance.addLogLeecher(sampleServerLogLeecher);
         LogLeecher errorLogLeecher = new LogLeecher("error");
         serverInstance.addErrorLogLeecher(errorLogLeecher);
         LogLeecher exceptionLogLeecher = new LogLeecher("Exception");
@@ -149,8 +143,6 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
                 null, env, requiredPorts);
         Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, "localhost");
         prometheusExtLogLeecher.waitForText(10000);
-        sampleServerLogLeecher.waitForText(1000);
-        prometheusServerLogLeecher.waitForText(1000);
 
         // Send requests to generate metrics
         int i = 0;
@@ -191,12 +183,8 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
 
     @Test
     public void testPrometheusDisabled() throws Exception {
-        LogLeecher sampleServerLogLeecher = new LogLeecher(SAMPLE_SERVER_LOG);
-        serverInstance.addLogLeecher(sampleServerLogLeecher);
         LogLeecher prometheusExtLogLeecher = new LogLeecher(PROMETHEUS_EXTENSION_LOG_PREFIX);
         serverInstance.addLogLeecher(prometheusExtLogLeecher);
-        LogLeecher prometheusServerLogLeecher = new LogLeecher(HTTP_SERVER_LOG_PREFIX + "0.0.0.0:9797");
-        serverInstance.addLogLeecher(prometheusServerLogLeecher);
         LogLeecher errorLogLeecher = new LogLeecher("error");
         serverInstance.addErrorLogLeecher(errorLogLeecher);
         LogLeecher exceptionLogLeecher = new LogLeecher("Exception");
@@ -207,13 +195,11 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
         int[] requiredPorts = {9091};
         serverInstance.startServer(balFile, null, null, requiredPorts);
         Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, "localhost");
-        sampleServerLogLeecher.waitForText(10000);
 
         String responseData = HttpClientRequest.doGet(TEST_RESOURCE_URL).getData();
         Assert.assertEquals(responseData, "Sum: 53");
 
         Assert.assertFalse(prometheusExtLogLeecher.isTextFound(), "Prometheus extension not expected to enable");
-        Assert.assertFalse(prometheusServerLogLeecher.isTextFound(), "Prometheus extension not expected to start");
         Assert.assertFalse(errorLogLeecher.isTextFound(), "Unexpected error log found");
         Assert.assertFalse(exceptionLogLeecher.isTextFound(), "Unexpected exception log found");
     }
