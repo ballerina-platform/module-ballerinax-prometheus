@@ -53,7 +53,7 @@ isolated function startReporter(string host, int port) returns error? {
     http:Listener httpListener = check new(port, config = {
         host: host
     });
-    service object {} prometheusReporter =
+    http:Service prometheusReporter =
         service object {
             # This method retrieves all metrics registered in the ballerina metrics registry,
             # and reformats based on the expected format by prometheus server.
