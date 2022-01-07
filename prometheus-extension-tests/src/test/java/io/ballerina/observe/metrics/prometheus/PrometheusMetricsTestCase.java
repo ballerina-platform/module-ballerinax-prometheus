@@ -71,9 +71,9 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
                                       int prometheusPort, String configFilename) throws Exception {
         final Map<String, Pattern> expectedMetrics = new HashMap<>();
         expectedMetrics.put("requests_total_value{listener_name=\"http\",src_module=\"_anon/.:0.0.0\"," +
-                "src_object_name=\"/test\",src_position=\"01_http_svc_test.bal:21:5\",protocol=\"http\"," +
-                "entrypoint_resource_accessor=\"get\",src_service_resource=\"true\",src_resource_path=\"/sum\"," +
-                "src_resource_accessor=\"get\",entrypoint_function_name=\"/sum\"," +
+                "src_object_name=\"/test\",http_status_code_group=\"2xx\",src_position=\"01_http_svc_test.bal:21:5\"," +
+                "protocol=\"http\",entrypoint_resource_accessor=\"get\",src_service_resource=\"true\"," +
+                "src_resource_path=\"/sum\",src_resource_accessor=\"get\",entrypoint_function_name=\"/sum\"," +
                 "entrypoint_function_module=\"_anon/.:0.0.0\",entrypoint_service_name=\"/test\"," +
                 "http_url=\"/test/sum\",http_method=\"GET\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
@@ -97,12 +97,11 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
                 "entrypoint_service_name=\"/test\",entrypoint_resource_accessor=\"get\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
         expectedMetrics.put("response_time_nanoseconds_total_value{listener_name=\"http\"," +
-                "src_module=\"_anon/.:0.0.0\",src_object_name=\"/test\"," +
-                "src_position=\"01_http_svc_test.bal:21:5\",protocol=\"http\"," +
-                "entrypoint_resource_accessor=\"get\",src_service_resource=\"true\",src_resource_path=\"/sum\"," +
-                "src_resource_accessor=\"get\",entrypoint_function_name=\"/sum\"," +
-                "entrypoint_function_module=\"_anon/.:0.0.0\",entrypoint_service_name=\"/test\"," +
-                "http_url=\"/test/sum\",http_method=\"GET\",}",
+                "src_module=\"_anon/.:0.0.0\",src_object_name=\"/test\",http_status_code_group=\"2xx\"," +
+                "src_position=\"01_http_svc_test.bal:21:5\",protocol=\"http\",entrypoint_resource_accessor=\"get\"," +
+                "src_service_resource=\"true\",src_resource_path=\"/sum\",src_resource_accessor=\"get\"," +
+                "entrypoint_function_name=\"/sum\",entrypoint_function_module=\"_anon/.:0.0.0\"," +
+                "entrypoint_service_name=\"/test\",http_url=\"/test/sum\",http_method=\"GET\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
         expectedMetrics.put("response_time_nanoseconds_total_value{src_object_name=\"ballerina/http/Caller\"," +
                 "src_module=\"_anon/.:0.0.0\",http_status_code_group=\"2xx\",src_client_remote=\"true\"," +
@@ -111,9 +110,9 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
                 "entrypoint_service_name=\"/test\",entrypoint_resource_accessor=\"get\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
         expectedMetrics.put("response_time_seconds_value{listener_name=\"http\",src_module=\"_anon/.:0.0.0\"," +
-                "src_object_name=\"/test\",src_position=\"01_http_svc_test.bal:21:5\",protocol=\"http\"," +
-                "entrypoint_resource_accessor=\"get\",src_service_resource=\"true\",src_resource_path=\"/sum\"," +
-                "src_resource_accessor=\"get\",entrypoint_function_name=\"/sum\"," +
+                "src_object_name=\"/test\",http_status_code_group=\"2xx\",src_position=\"01_http_svc_test.bal:21:5\"," +
+                "protocol=\"http\",entrypoint_resource_accessor=\"get\",src_service_resource=\"true\"," +
+                "src_resource_path=\"/sum\",src_resource_accessor=\"get\",entrypoint_function_name=\"/sum\"," +
                 "entrypoint_function_module=\"_anon/.:0.0.0\",entrypoint_service_name=\"/test\"," +
                 "http_url=\"/test/sum\",http_method=\"GET\",}",
                 PROMETHEUS_METRIC_VALUE_REGEX);
