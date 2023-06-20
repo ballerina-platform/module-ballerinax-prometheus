@@ -49,8 +49,9 @@ jobs:
           packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
           JAVA_OPTS: -DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true
 
+      - name: Run Ballerina build using the native executable
+        run: bal build --native ./prometheus-extension-ballerina
+
       - name: Run Ballerina tests using the native executable
         run: bal test --native ./prometheus-extension-ballerina
 
-      - name: Run Ballerina build using the native executable
-        run: bal build --native ./prometheus-extension-ballerina
