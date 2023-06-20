@@ -42,6 +42,13 @@ jobs:
         with:
           version: 2201.6.0
 
+      - name: Update dependency versions
+        run: ./gradlew :jaeger-extension-ballerina:updateTomlVerions
+        env:
+          packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
+          packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
+          JAVA_OPTS: -DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true
+
       - name: Run Ballerina tests using the native executable
         run: bal test --native ./prometheus-extension-ballerina
 
