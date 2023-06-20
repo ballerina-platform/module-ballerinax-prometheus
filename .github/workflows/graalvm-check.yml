@@ -54,4 +54,3 @@ jobs:
 
       - name: Run Ballerina tests using the native executable
         run: bal test --native ./prometheus-extension-ballerina
-
