@@ -29,6 +29,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.net.InetAddress;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
@@ -140,7 +141,8 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
         int[] requiredPorts = {9091, prometheusPort};
         serverInstance.startServer(balFile, new String[]{"--observability-included"},
                 null, env, requiredPorts);
-        Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, "localhost");
+        InetAddress inetAddress = InetAddress.getByName("localhost");
+        Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, inetAddress);
         prometheusExtLogLeecher.waitForText(10000);
 
         // Send requests to generate metrics
@@ -193,7 +195,8 @@ public class PrometheusMetricsTestCase extends BaseTestCase {
                 .getAbsolutePath();
         int[] requiredPorts = {9091};
         serverInstance.startServer(balFile, null, null, requiredPorts);
-        Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, "localhost");
+        InetAddress inetAddress = InetAddress.getByName("localhost");
+        Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, inetAddress);
 
         String responseData = HttpClientRequest.doGet(TEST_RESOURCE_URL).getData();
         Assert.assertEquals(responseData, "Sum: 53");
