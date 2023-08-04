@@ -141,6 +141,7 @@ task ballerinaBuild {
     dependsOn copyStdlibs
     dependsOn updateTomlVerions
     dependsOn configurations.externalJars
+    dependsOn(":prometheus-extension-ballerina:jar")
 
     inputs.dir file(project.projectDir)
     finalizedBy(revertTomlFile)
