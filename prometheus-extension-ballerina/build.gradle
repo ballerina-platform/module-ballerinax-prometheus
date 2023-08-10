@@ -94,7 +94,7 @@ def tomlVersion = stripBallerinaExtensionVersion("${project.version}")
 def ballerinaCentralAccessToken = System.getenv('BALLERINA_CENTRAL_ACCESS_TOKEN')
 def originalConfig = ballerinaConfigFile.text
 def originalDependencyConfig = ballerinaDependencyFile.text
-def artifactJars = file("$project.projectDir/target/cache/${packageOrg}/${packageName}/${tomlVersion}/java11/")
+def artifactJars = file("$project.projectDir/target/cache/${packageOrg}/${packageName}/${tomlVersion}/java17/")
 def platform = "any"
 def distributionBinPath = "${project.buildDir.absolutePath}/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
 
@@ -141,6 +141,7 @@ task ballerinaBuild {
     dependsOn copyStdlibs
     dependsOn updateTomlVerions
     dependsOn configurations.externalJars
+    dependsOn(":prometheus-extension-ballerina:jar")
 
     inputs.dir file(project.projectDir)
     finalizedBy(revertTomlFile)
@@ -193,6 +194,7 @@ task ballerinaBuild {
     outputs.dir artifactCacheParent
     outputs.dir artifactBallerinaDocs
     outputs.dir artifactLibParent
+    doNotTrackState("build needs to run every time")
 }
 
 task createArtifactZip(type: Zip) {
