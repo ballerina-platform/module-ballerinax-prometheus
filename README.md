@@ -29,6 +29,25 @@ Execute the commands below to build from source.
 
         ./gradlew clean test
 
+## Available Metrics
+
+The exporter provides the following metrics.
+
+|Metric Name|Description|
+|---|---|
+|response_time_seconds_value|Response time of a http request in seconds|
+|response_time_seconds_max|Maximum response time of a http request|
+|response_time_seconds_min|Minimum response time of a http request|
+|response_time_seconds_mean|Average response time of a http request|
+|response_time_seconds_stdDev|Standard deviation of response time of a http request|
+|response_time_seconds|Response time of a http request including all information (maximum, minimum, mean, average, standard deviation)|
+|response_time_nanoseconds_total_value|Response time of a http request in nano seconds|
+|requests_total_value|Total number of requests|
+|inprogress_requests_value|Total number of inprogress requests|
+|kafka_publishers_value|Number of publishers in kafka|
+|kafka_consumers_value|Number of consumers in kafka|
+|kafka_errors_value|Number of errors happened while publishing in kafka|
+
 ## Contributing to Ballerina
 
 As an open source project, Ballerina welcomes contributions from the community.
