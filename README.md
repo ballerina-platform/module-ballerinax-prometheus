@@ -35,13 +35,13 @@ The exporter provides the following metrics.
 
 |Metric Name|Description|
 |---|---|
-|response_time_seconds_value|Response time of a http request in seconds|
-|response_time_seconds_max|Maximum response time of a http request|
-|response_time_seconds_min|Minimum response time of a http request|
-|response_time_seconds_mean|Average response time of a http request|
-|response_time_seconds_stdDev|Standard deviation of response time of a http request|
-|response_time_seconds|Response time of a http request including all information (maximum, minimum, mean, average, standard deviation)|
-|response_time_nanoseconds_total_value|Summary of HTTP request-response times across various time frames and quantiles|
+|response_time_seconds_value|Response time of a HTTP request in seconds|
+|response_time_seconds_max|Maximum response time of a HTTP request|
+|response_time_seconds_min|Minimum response time of a HTTP request|
+|response_time_seconds_mean|Average response time of a HTTP request|
+|response_time_seconds_stdDev|Standard deviation of response time of a HTTP request|
+|response_time_seconds|Summary of HTTP request-response times across various time frames and quantiles|
+|response_time_nanoseconds_total_value|Response time of a http request in nano seconds|
 |requests_total_value|Total number of requests|
 |response_errors_total_value|Total number of response errors|
 |inprogress_requests_value|Total number of inprogress requests|
