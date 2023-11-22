@@ -41,8 +41,9 @@ The exporter provides the following metrics.
 |response_time_seconds_mean|Average response time of a http request|
 |response_time_seconds_stdDev|Standard deviation of response time of a http request|
 |response_time_seconds|Response time of a http request including all information (maximum, minimum, mean, average, standard deviation)|
-|response_time_nanoseconds_total_value|Response time of a http request in nano seconds|
+|response_time_nanoseconds_total_value|Summary of response time of http requests for different time windows and quantile values|
 |requests_total_value|Total number of requests|
+|response_errors_total_value|Total number of response errors|
 |inprogress_requests_value|Total number of inprogress requests|
 |kafka_publishers_value|Number of publishers in kafka|
 |kafka_consumers_value|Number of consumers in kafka|
