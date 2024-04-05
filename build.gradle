@@ -81,6 +81,7 @@ subprojects {
         ballerinaStdLibs "io.ballerina.stdlib:http-ballerina:${stdlibHttpVersion}"
 
         // Standard Library Transitive Dependencies
+        ballerinaStdLibs "io.ballerina.stdlib:constraint-ballerina:${stdlibConstraintVersion}"
         ballerinaStdLibs "io.ballerina.stdlib:io-ballerina:${stdlibIoVersion}"
         ballerinaStdLibs "io.ballerina.stdlib:os-ballerina:${stdlibOsVersion}"
         ballerinaStdLibs "io.ballerina.stdlib:time-ballerina:${stdlibTimeVersion}"
