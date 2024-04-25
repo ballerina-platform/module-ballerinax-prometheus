@@ -77,7 +77,6 @@ subprojects {
         ballerinaStdLibs "io.ballerina:observe-ballerina:${observeInternalVersion}"
 
         // Standard Library Dependencies
-        ballerinaStdLibs "io.ballerina.stdlib:regex-ballerina:${stdlibRegexVersion}"
         ballerinaStdLibs "io.ballerina.stdlib:http-ballerina:${stdlibHttpVersion}"
 
         // Standard Library Transitive Dependencies
