@@ -56,9 +56,6 @@ isolated function startReporter(string host, int port) returns error? {
         service object {
             # This method retrieves all metrics registered in the ballerina metrics registry,
             # and reformats based on the expected format by prometheus server.
-            @http:ResourceConfig {
-                produces: ["application/text"]
-            }
             resource function get metrics(http:Caller caller) {
                 observe:Metric?[] metrics = observe:getAllMetrics();
                 string[] payload = [];
