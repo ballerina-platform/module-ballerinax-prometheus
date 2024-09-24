@@ -25,6 +25,12 @@ jobs:
           packagePAT: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./gradlew clean build
+          ./gradlew codeCoverageReport --console=plain --no-daemon
+
+      - name: Upload Coverage Report
+        uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true
 
       # Send notification when build fails
       - name: Notify failure
