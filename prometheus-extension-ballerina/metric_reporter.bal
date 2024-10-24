@@ -58,75 +58,35 @@ isolated function startReporter(string host, int port) returns error? {
             # and reformats based on the expected format by prometheus server.
             resource function get metrics(http:Caller caller) {
                 observe:Metric?[] metrics = observe:getAllMetrics();
-                map<string[]> payload = {};
+                string[] payload = [];
                 foreach var m in metrics {
                     observe:Metric metric = <observe:Metric> m;
                     string qualifiedMetricName = getEscapedName(metric.name);
                     string metricReportName = getMetricName(qualifiedMetricName, "value");
-                    if !payload.hasKey(metricReportName) {
-                        payload[metricReportName] = [];
-                        (<string[]> payload[metricReportName]).push(generateMetricHelp(metricReportName, metric.desc));
-                        (<string[]> payload[metricReportName]).push(generateMetricInfo(metricReportName, metric.metricType));
-                    }
-                    (<string[]> payload[metricReportName]).push(generateMetric(metricReportName, metric.tags, metric.value));
+                    payload.push(generateMetricHelp(metricReportName, metric.desc));
+                    payload.push(generateMetricInfo(metricReportName, metric.metricType));
+                    payload.push(generateMetric(metricReportName, metric.tags, metric.value));
                     if ((str:toLowerAscii(metric.metricType) == METRIC_TYPE_GAUGE) && !(metric.summary is ())){
                         map<string> tags = metric.tags;
                         observe:Snapshot[] summaries = <observe:Snapshot[]> metric.summary;
                         foreach var aSnapshot in summaries {
                             tags[EXPIRY_TAG] = aSnapshot.timeWindow.toString();
-                            if !payload.hasKey(qualifiedMetricName) {
-                                payload[qualifiedMetricName] = [];
-                                (<string[]> payload[qualifiedMetricName]).push(generateMetricHelp(qualifiedMetricName, string `A summary of ${
-                                    qualifiedMetricName}`));
-                                (<string[]> payload[qualifiedMetricName]).push(generateMetricInfo(qualifiedMetricName, METRIC_TYPE_SUMMARY));
-                            }
-
-                            string meanMetricName = getMetricName(qualifiedMetricName, "mean");
-                            if !payload.hasKey(meanMetricName) {
-                                payload[meanMetricName] = [];
-                                (<string[]> payload[meanMetricName]).push(generateMetricHelp(meanMetricName, string `Mean of ${
-                                    qualifiedMetricName}`));
-                                (<string[]> payload[meanMetricName]).push(generateMetricInfo(meanMetricName, METRIC_TYPE_GAUGE));
-                            }
-                            (<string[]> payload[meanMetricName]).push(generateMetric(meanMetricName, tags, aSnapshot.mean));
-                            
-                            string maxMetricName = getMetricName(qualifiedMetricName, "max");
-                            if !payload.hasKey(maxMetricName) {
-                                payload[maxMetricName] = [];
-                                (<string[]> payload[maxMetricName]).push(generateMetricHelp(maxMetricName, string `Maximum of ${
-                                    qualifiedMetricName}`));
-                                (<string[]> payload[maxMetricName]).push(generateMetricInfo(maxMetricName, METRIC_TYPE_GAUGE));
-                            }
-                            (<string[]> payload[maxMetricName]).push(generateMetric(maxMetricName, tags, aSnapshot.max));
-
-                            string minMetricName = getMetricName(qualifiedMetricName, "min");
-                            if !payload.hasKey(minMetricName) {
-                                payload[minMetricName] = [];
-                                (<string[]> payload[minMetricName]).push(generateMetricHelp(minMetricName, string `Minimum of ${
-                                    qualifiedMetricName}`));
-                                (<string[]> payload[minMetricName]).push(generateMetricInfo(minMetricName, METRIC_TYPE_GAUGE));
-                            }
-                            (<string[]> payload[minMetricName]).push(generateMetric(minMetricName, tags, aSnapshot.min));
-
-                            string stdDevMetricName = getMetricName(qualifiedMetricName, "stdDev");
-                            if !payload.hasKey(stdDevMetricName) {
-                                payload[stdDevMetricName] = [];
-                                (<string[]> payload[stdDevMetricName]).push(generateMetricHelp(stdDevMetricName, string `Standard deviation of ${
-                                    qualifiedMetricName}`));
-                                (<string[]> payload[stdDevMetricName]).push(generateMetricInfo(stdDevMetricName, METRIC_TYPE_GAUGE));
-                            }
-                            (<string[]> payload[stdDevMetricName]).push(generateMetric(stdDevMetricName, tags, aSnapshot.stdDev));
-
+                            payload.push(generateMetricHelp(qualifiedMetricName, string `A Summary of ${
+                                                        qualifiedMetricName} for window of ${aSnapshot.timeWindow.toString()}`));
+                            payload.push(generateMetricInfo(qualifiedMetricName, METRIC_TYPE_SUMMARY));
+                            payload.push(generateMetric(getMetricName(qualifiedMetricName, "mean"), tags, aSnapshot.mean));
+                            payload.push(generateMetric(getMetricName(qualifiedMetricName, "max"), tags, aSnapshot.max));
+                            payload.push(generateMetric(getMetricName(qualifiedMetricName, "min"), tags, aSnapshot.min));
+                            payload.push(generateMetric(getMetricName(qualifiedMetricName, "stdDev"), tags, aSnapshot.stdDev));
                             foreach var percentileValue in aSnapshot.percentileValues  {
                                 tags[PERCENTILE_TAG] = percentileValue.percentile.toString();
-                                (<string[]> payload[qualifiedMetricName]).push(generateMetric(qualifiedMetricName, tags, percentileValue.value));
+                                payload.push(generateMetric(qualifiedMetricName, tags, percentileValue.value));
                             }
                             _ = tags.remove(PERCENTILE_TAG);
                         }
                     }
                 }
-
-                string stringPayload = string:'join("\n", ...payload.map(arr => string:'join("\n", ...arr)).toArray());
+                string stringPayload = str:'join("\n", ...payload);
                 checkpanic caller->respond(stringPayload);
             }
         };
