@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-//plugins {
-//    id 'checkstyle'
-//    id "com.github.spotbugs" version "5.0.14"
-//    id "net.researchgate.release" version "2.8.0"
-//    id "de.undercouch.download" version "5.4.0"
-//    id 'jacoco'
-//}
 plugins {
     id 'checkstyle'
     id "com.github.spotbugs" version "${githubSpotbugsVersion}"
