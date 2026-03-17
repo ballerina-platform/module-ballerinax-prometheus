@@ -1,8 +1,13 @@
-## Package Overview
+## Overview
 
-The Prometheus Observability Extension is one of the metrics extensions of the <a target="_blank" href="https://ballerina.io/">Ballerina</a> language.
+The Prometheus Observability Extension provides an implementation for exporting metrics to a [Prometheus](https://prometheus.io/) Server.
 
-It provides an implementation for exporting metrics to a Prometheus Server.
+### Key Features
+
+- Export application metrics to a Prometheus Server
+- Configurable host and port for the metrics endpoint
+- Simple configuration via import and Config.toml
+- Seamless integration with observability tooling
 
 ### Enabling Prometheus Extension
 
