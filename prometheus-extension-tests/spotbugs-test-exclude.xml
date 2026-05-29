@@ -28,4 +28,15 @@
         <Field name="serverInstance"/>
         <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
     </Match>
+
+    <!-- Pre-existing issues surfaced by SpotBugs 4.9.x (bundled in plugin >= 6.2.0) -->
+    <Match>
+        <BugCode name="THROWS"/>
+    </Match>
+    <Match>
+        <BugCode name="AT"/>
+    </Match>
+    <Match>
+        <BugCode name="USELESS_STRING"/>
+    </Match>
 </FindBugsFilter>
