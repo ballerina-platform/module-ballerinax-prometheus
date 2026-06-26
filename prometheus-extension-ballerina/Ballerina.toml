@@ -18,7 +18,7 @@
 org = "ballerinax"
 name = "prometheus"
 version = "@toml.version@"
-distribution = "2201.11.0"
+distribution = "2201.14.0-20260527-050400-74f7e6bf"
 
 [platform.java17]
 graalvmCompatible = true

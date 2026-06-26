@@ -43,7 +43,7 @@ jar {
 task unpackJballerinaTools(type: Copy, dependsOn: configurations.jbalTools) {
     configurations.jbalTools.resolvedConfiguration.resolvedArtifacts.each { artifact ->
         from zipTree(artifact.getFile())
-        into new File("${project.buildDir}/extracted-distributions", "jballerina-tools-zip")
+        into new File("${project.layout.buildDirectory.get().asFile}/extracted-distributions", "jballerina-tools-zip")
     }
 }
 
@@ -51,7 +51,7 @@ def unpackDistributions(distributionConfigurations) {
     distributionConfigurations.resolvedConfiguration.resolvedArtifacts.each { artifact ->
         copy {
             from zipTree(artifact.getFile())
-            into new File("${project.buildDir}/extracted-distributions", artifact.name + "-zip")
+            into new File("${project.layout.buildDirectory.get().asFile}/extracted-distributions", artifact.name + "-zip")
         }
     }
 }
@@ -71,11 +71,11 @@ task unpackExtensions(dependsOn: configurations.observabilityExtensions) {
 def copyDistributions (distributionConfigurations) {
     copy {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        into "${project.buildDir}/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
+        into "${project.layout.buildDirectory.get().asFile}/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
 
         /* Standard Libraries */
         distributionConfigurations.resolvedConfiguration.resolvedArtifacts.each { artifact ->
-            def artifactExtractedPath = "${project.buildDir}/extracted-distributions/" + artifact.name + "-zip"
+            def artifactExtractedPath = "${project.layout.buildDirectory.get().asFile}/extracted-distributions/" + artifact.name + "-zip"
             into("repo/bala") {
                 from "${artifactExtractedPath}/bala"
             }
@@ -109,8 +109,8 @@ task createServerZip(type: Zip) {
     dependsOn copyExtensions
 
     archiveFileName = "jballerina-tools-${ballerinaLangVersion}.zip"
-    destinationDirectory = file("${buildDir}/repacked-distributions")
-    from "${project.buildDir}/extracted-distributions/jballerina-tools-zip/"
+    destinationDirectory = file("${layout.buildDirectory.get().asFile}/repacked-distributions")
+    from "${project.layout.buildDirectory.get().asFile}/extracted-distributions/jballerina-tools-zip/"
 }
 
 test {
@@ -123,11 +123,11 @@ test {
         exceptionFormat "full"
     }
 
-    systemProperty 'basedir', "${buildDir}"
-    systemProperty 'libdir', "${buildDir}"
+    systemProperty 'basedir', "${layout.buildDirectory.get().asFile}"
+    systemProperty 'libdir', "${layout.buildDirectory.get().asFile}"
     systemProperty 'server.zip', createServerZip.outputs.files.singleFile
     systemProperty 'jballerina.server.zip', createServerZip.outputs.files.singleFile
-    systemProperty 'java.util.logging.config.file', "${buildDir}/resources/test/logging.properties"
+    systemProperty 'java.util.logging.config.file', "${layout.buildDirectory.get().asFile}/resources/test/logging.properties"
     systemProperty 'java.util.logging.manager', 'org.ballerinalang.logging.BLogManager'
     systemProperty 'ballerina.agent.path', configurations.testUtils.asPath
     useTestNG() {
