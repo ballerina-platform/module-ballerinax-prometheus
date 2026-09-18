@@ -56,7 +56,7 @@ isolated function startReporter(string host, int port) returns error? {
         service object {
             # This method retrieves all metrics registered in the ballerina metrics registry,
             # and reformats based on the expected format by prometheus server.
-            resource function get metrics(http:Caller caller) {
+            resource function get metrics() returns string {
                 observe:Metric?[] metrics = observe:getAllMetrics();
                 map<string[]> payload = {};
                 foreach var m in metrics {
@@ -127,7 +127,7 @@ isolated function startReporter(string host, int port) returns error? {
                 }
 
                 string stringPayload = string:'join("\n", ...payload.map(arr => string:'join("\n", ...arr)).toArray());
-                checkpanic caller->respond(stringPayload);
+                return stringPayload;
             }
         };
     check httpListener.attach(prometheusReporter, "/");
