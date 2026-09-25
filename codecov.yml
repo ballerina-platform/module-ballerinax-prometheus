@@ -1,6 +1,6 @@
 fixes:
-  - "ballerinax/prometheus/*/::prometheus-extension-ballerina/"
+  - "ballerinax/prometheus/*/::ballerina/"
 
 ignore:
-  - "**/prometheus-extension-tests"
+  - "**/ballerina-tests"
 
