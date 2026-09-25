@@ -49,7 +49,7 @@ jobs:
           packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: |
-          ./gradlew clean build ballerinaPublish
+          ./gradlew -PpublishToCentral=true clean build
       - name: Ballerina Central Dev Push
         if: ${{ github.event.inputs.environment == 'DEV CENTRAL' }}
         env:
@@ -61,7 +61,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: |
           sed -i 's/version=\(.*\)-SNAPSHOT/version=\1/g' gradle.properties
-          ./gradlew clean build ballerinaPublish
+          ./gradlew -PpublishToCentral=true clean build
       - name: Ballerina Central Stage Push
         if: ${{ github.event.inputs.environment == 'STAGE CENTRAL' }}
         env:
@@ -73,4 +73,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: |
           sed -i 's/version=\(.*\)-SNAPSHOT/version=\1/g' gradle.properties
-          ./gradlew clean build ballerinaPublish
+          ./gradlew -PpublishToCentral=true clean build

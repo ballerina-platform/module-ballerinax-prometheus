@@ -43,7 +43,7 @@ jobs:
           packagePublishRepo: ${{ github.repository }}
         run: |
           ./gradlew release -Prelease.useAutomaticVersion=true
-          ./gradlew -Pversion=${VERSION} publish -x test
+          ./gradlew -Pversion=${VERSION} -PpublishToCentral=true publish -x test
       - name: Create Github release from the release tag
         run: |
           curl --request POST 'https://api.github.com/repos/ballerina-platform/module-ballerinax-prometheus/releases' \

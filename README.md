@@ -9,13 +9,18 @@
 
 ### Setting Up the Prerequisites
 
-1. Download and install Java SE Development Kit (JDK) version 17 (from one of the following locations).
+1. Download and install Java SE Development Kit (JDK) version 25 (from one of the following locations).
 
     * [Oracle](https://www.oracle.com/java/technologies/downloads/)
 
     * [OpenJDK](https://adoptopenjdk.net/)
 
       > **Note:** Set the JAVA_HOME environment variable to the path name of the directory into which you installed JDK.
+
+2. Export a GitHub username and a personal access token (with the `read:packages` scope) as the `packageUser` and `packagePAT` environment variables. The build uses them to download the Ballerina Gradle plugin and other Ballerina artifacts from GitHub Packages.
+
+        export packageUser=<github-username>
+        export packagePAT=<github-personal-access-token>
 
 ### Building the Source
 
