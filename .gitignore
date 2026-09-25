@@ -41,3 +41,6 @@ gradle-app.setting
 
 # Ballerina
 target/
+
+# macOS
+.DS_Store
