@@ -14,8 +14,25 @@
  * limitations under the License.
  */
 
+pluginManagement {
+    plugins {
+        id "io.ballerina.plugin" version "${ballerinaGradlePluginVersion}"
+    }
+
+    repositories {
+        gradlePluginPortal()
+        maven {
+            url = 'https://maven.pkg.github.com/ballerina-platform/*'
+            credentials {
+                username System.getenv("packageUser")
+                password System.getenv("packagePAT")
+            }
+        }
+    }
+}
+
 plugins {
-    id "com.gradle.enterprise" version "3.2"
+    id "com.gradle.develocity" version "3.19.2"
 }
 
 rootProject.name = 'module-ballerinax-prometheus'
@@ -28,9 +45,9 @@ project(':build-config:checkstyle').projectDir = file('build-config/checkstyle')
 project(':prometheus-extension-ballerina').projectDir = file('prometheus-extension-ballerina')
 project(':prometheus-extension-tests').projectDir = file('prometheus-extension-tests')
 
-gradleEnterprise {
+develocity {
     buildScan {
-        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-        termsOfServiceAgree = 'yes'
+        termsOfUseUrl = 'https://gradle.com/help/legal-terms-of-use'
+        termsOfUseAgree = 'yes'
     }
 }

@@ -43,7 +43,7 @@ jobs:
           version: 2201.11.0
 
       - name: Update dependency versions
-        run: ./gradlew :prometheus-extension-ballerina:updateTomlVerions
+        run: ./gradlew :prometheus-extension-ballerina:updateTomlFiles
         env:
           packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
           packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}

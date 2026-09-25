@@ -28,4 +28,11 @@
         <Field name="serverInstance"/>
         <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
     </Match>
+
+    <!-- TestNG lifecycle/test methods declare "throws Exception" to propagate
+         whatever the Ballerina test-utils server/HTTP helpers throw -->
+    <Match>
+        <Class name="io.ballerina.observe.metrics.prometheus.PrometheusMetricsTestCase"/>
+        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"/>
+    </Match>
 </FindBugsFilter>
