@@ -17,7 +17,7 @@
 [package]
 org = "ballerinax"
 name = "prometheus"
-version = "1.1.0"
+version = "@toml.version@"
 distribution = "2201.14.0"
 readme = "Package.md"
 

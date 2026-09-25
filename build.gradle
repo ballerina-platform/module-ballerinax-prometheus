@@ -23,6 +23,10 @@ plugins {
     id 'jacoco'
 }
 
+jacoco {
+    toolVersion = jacocoVersion
+}
+
 allprojects {
     group = project.group
     version = project.version
@@ -58,6 +62,12 @@ allprojects {
 }
 
 subprojects {
+    // The Ballerina module project is built by io.ballerina.plugin, which
+    // registers its own build/test/clean tasks that clash with java-library's.
+    if (project.name == 'prometheus-extension-ballerina') {
+        return
+    }
+
     apply plugin: 'java-library'
     apply plugin: 'checkstyle'
     apply plugin: 'com.github.spotbugs'
@@ -73,30 +83,10 @@ subprojects {
         // Ballerina Pack
         jbalTools "org.ballerinalang:jballerina-tools:${ballerinaLangVersion}"
 
-        // Observe Modules
+        // ballerina/observe + ballerinai/observe must be bundled into the test
+        // distribution; every other dependency resolves from Central.
         ballerinaStdLibs "io.ballerina.stdlib:observe-ballerina:${observeVersion}"
         ballerinaStdLibs "io.ballerina:observe-ballerina:${observeInternalVersion}"
-
-        // Standard Library Dependencies
-        ballerinaStdLibs "io.ballerina.stdlib:http-ballerina:${stdlibHttpVersion}"
-
-        // Standard Library Transitive Dependencies
-        ballerinaStdLibs "io.ballerina.stdlib:constraint-ballerina:${stdlibConstraintVersion}"
-        ballerinaStdLibs "io.ballerina.stdlib:io-ballerina:${stdlibIoVersion}"
-        ballerinaStdLibs "io.ballerina.stdlib:os-ballerina:${stdlibOsVersion}"
-        ballerinaStdLibs "io.ballerina.stdlib:time-ballerina:${stdlibTimeVersion}"
-        ballerinaStdLibs "io.ballerina.stdlib:url-ballerina:${stdlibUrlVersion}"
-        ballerinaStdLibs "io.ballerina.stdlib:task-ballerina:${stdlibTaskVersion}"
-        ballerinaStdLibs "io.ballerina.stdlib:file-ballerina:${stdlibFileVersion}"
-        ballerinaStdLibs "io.ballerina.stdlib:crypto-ballerina:${stdlibCryptoVersion}"
-        ballerinaStdLibs "io.ballerina.stdlib:log-ballerina:${stdlibLogVersion}"
-        ballerinaStdLibs "io.ballerina.stdlib:mime-ballerina:${stdlibMimeVersion}"
-        ballerinaStdLibs "io.ballerina.stdlib:cache-ballerina:${stdlibCacheVersion}"
-        ballerinaStdLibs "io.ballerina.stdlib:auth-ballerina:${stdlibAuthVersion}"
-        ballerinaStdLibs "io.ballerina.stdlib:jwt-ballerina:${stdlibJwtVersion}"
-        ballerinaStdLibs "io.ballerina.stdlib:oauth2-ballerina:${stdlibOAuth2Version}"
-        ballerinaStdLibs "io.ballerina.stdlib:uuid-ballerina:${stdlibUuidVersion}"
-        ballerinaStdLibs "io.ballerina.lib:data.jsondata-ballerina:${stdlibDataJsondataVersion}"
     }
 
     checkstyle {
@@ -161,7 +151,10 @@ release {
 task codeCoverageReport(type: JacocoReport) {
     dependsOn('prometheus-extension-ballerina:extractBallerinaClassFiles')
 
-    executionData fileTree(project.rootDir.absolutePath).include("**/*.exec")
+    executionData fileTree(project.rootDir.absolutePath) {
+        include "**/*.exec"
+        exclude "**/jballerina-tools-*/**"
+    }
 
     additionalClassDirs files("${buildDir}/classes")
 
@@ -169,9 +162,9 @@ task codeCoverageReport(type: JacocoReport) {
         xml.required = true
         html.required = true
         csv.required = true
-        xml.destination = new File("${buildDir}/reports/jacoco/report.xml")
-        html.destination = new File("${buildDir}/reports/jacoco/report.html")
-        csv.destination = new File("${buildDir}/reports/jacoco/report.csv")
+        xml.outputLocation = layout.buildDirectory.file("reports/jacoco/report.xml").get().asFile
+        html.outputLocation = layout.buildDirectory.file("reports/jacoco/report.html").get().asFile
+        csv.outputLocation = layout.buildDirectory.file("reports/jacoco/report.csv").get().asFile
     }
 
     onlyIf = {
@@ -179,7 +172,13 @@ task codeCoverageReport(type: JacocoReport) {
     }
 }
 
-task build {
-    dependsOn('prometheus-extension-ballerina:build')
+if (tasks.names.contains('build')) {
+    tasks.named('build') {
+        dependsOn('prometheus-extension-ballerina:build')
+    }
+} else {
+    tasks.register('build') {
+        dependsOn('prometheus-extension-ballerina:build')
+    }
 }
 

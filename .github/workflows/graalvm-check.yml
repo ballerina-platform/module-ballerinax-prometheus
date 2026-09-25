@@ -16,7 +16,7 @@ jobs:
         uses: graalvm/setup-graalvm@v1
         with:
           version: 'latest'
-          java-version: '21'
+          java-version: '25'
           components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -40,10 +40,10 @@ jobs:
       - name: Set Up Ballerina
         uses: ballerina-platform/setup-ballerina@v1
         with:
-          version: 2201.11.0
+          version: 2201.14.0
 
       - name: Update dependency versions
-        run: ./gradlew :prometheus-extension-ballerina:updateTomlVerions
+        run: ./gradlew :prometheus-extension-ballerina:updateTomlFiles
         env:
           packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
           packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
