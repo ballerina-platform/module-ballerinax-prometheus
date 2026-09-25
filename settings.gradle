@@ -42,8 +42,8 @@ include(':prometheus-extension-ballerina')
 include(':prometheus-extension-tests')
 
 project(':build-config:checkstyle').projectDir = file('build-config/checkstyle')
-project(':prometheus-extension-ballerina').projectDir = file('prometheus-extension-ballerina')
-project(':prometheus-extension-tests').projectDir = file('prometheus-extension-tests')
+project(':prometheus-extension-ballerina').projectDir = file('ballerina')
+project(':prometheus-extension-tests').projectDir = file('ballerina-tests')
 
 develocity {
     buildScan {

@@ -64,7 +64,7 @@ ballerina {
 
 configurations {
     ballerinaStdLibs
-    // Consumed by prometheus-extension-tests to assemble a test distribution.
+    // Consumed by the ballerina-tests project to assemble a test distribution.
     distribution {
         canBeConsumed true
         canBeResolved false

@@ -37,6 +37,6 @@ jobs:
         with:
           name: distribution
           path: |
-            prometheus-extension-ballerina/build/distributions/prometheus-extension-ballerina-*.zip
+            ballerina/build/distributions/prometheus-extension-ballerina-*.zip
             grafana-dashboard.json
           if-no-files-found: error

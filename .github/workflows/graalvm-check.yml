@@ -50,7 +50,7 @@ jobs:
           JAVA_OPTS: -DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true
 
       - name: Run Ballerina build using the native executable
-        run: bal build --native ./prometheus-extension-ballerina
+        run: bal build --native ./ballerina
 
       - name: Run Ballerina tests using the native executable
-        run: bal test --native ./prometheus-extension-ballerina
+        run: bal test --native ./ballerina
