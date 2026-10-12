@@ -59,7 +59,7 @@ ballerina {
     packageOrganization = packageOrg
     module = packageName
     langVersion = ballerinaLangVersion
-    platform = 'java25'
+    platform = 'any'
 }
 
 configurations {
@@ -130,7 +130,7 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/${System.getenv("packagePublishRepo")}")
+            url = uri("https://maven.pkg.github.com/ballerina-platform/module-ballerinax-prometheus")
             credentials {
                 username = System.getenv("packageUser")
                 password = System.getenv("packagePAT")
